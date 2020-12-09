@@ -21,12 +21,12 @@ $router->get('/', function () use ($router) {
 
 $router->group(['middleware' => 'auth'], function() use ($router) {
     // Create new URL
-    $router->post('/create', 'UrlController@create');
+    $router->post('/create', 'LinkController@create');
     // View Url history
-    $router->post('/url', 'UrlController@read');
+//    $router->post('/url', 'LinkController@read');
     // View User history
-    $router->post('/user', 'UserController@read');
+//    $router->post('/user', 'UserController@read');
 });
 
 // Redirect URL
-$router->post('/{url}', 'UrlController@redirect');
+//$router->get('/{url}', 'LinkController@redirect');
