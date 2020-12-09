@@ -29,4 +29,4 @@ $router->group(['middleware' => 'auth'], function() use ($router) {
 });
 
 // Redirect URL
-//$router->get('/{url}', 'LinkController@redirect');
+$router->get('/{link}', 'LinkController@redirect');

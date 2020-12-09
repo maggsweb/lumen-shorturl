@@ -25,10 +25,10 @@ class Link extends Model
     }
 
 
-//    public function getRouteKeyName()
-//    {
-//        return 'short';
-//    }
+    public function getRouteKeyName()
+    {
+        return 'short';
+    }
 
 
     /**

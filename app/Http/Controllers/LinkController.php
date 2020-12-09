@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Link;
 use Exception;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\RedirectResponse;
+use Laravel\Lumen\Http\Redirector;
 use Laravel\Lumen\Http\Request;
 
 class LinkController extends Controller
@@ -72,5 +74,18 @@ class LinkController extends Controller
         return $short;
     }
 
+
+    /**
+     * @param Request $request
+     * @param $link
+     * @return RedirectResponse|Redirector
+     */
+    public function redirect(Request $request, $link)
+    {
+        $link = Link::where('short', $link)->first();
+        if ($link) {
+            return redirect($link->long);
+        }
+    }
 
 }
