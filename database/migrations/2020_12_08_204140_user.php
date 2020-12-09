@@ -15,11 +15,10 @@ class User extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
 
-            // Auto incremented ID
-            $table->increments('id');
+            $table->bigIncrements('id');
 
             // UUID, to add to Header Requests, Unique, Indexed, Required..
-            $table->uuid('token')->unique()->nullable(false);
+            $table->uuid('uuid')->unique()->nullable(false);
 
             // User Account Status
             $table->enum('status', ['Active', 'InActive'])->default('Active');
