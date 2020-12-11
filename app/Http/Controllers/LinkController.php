@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Http\Redirector;
 use Laravel\Lumen\Http\Request;
@@ -16,6 +17,7 @@ use Laravel\Lumen\Http\ResponseFactory;
 
 class LinkController extends Controller
 {
+
     /**
      * Return existing/new Link
      *
@@ -23,7 +25,7 @@ class LinkController extends Controller
      * @return Response|ResponseFactory
      * @throws Exception
      */
-    public function create(Request $request)
+    public function createLink(Request $request)
     {
         // Merge JSON body with request to Validate
         $request->merge((array)json_decode($request->getContent()));
@@ -67,6 +69,44 @@ class LinkController extends Controller
     }
 
     /**
+     * Delete a Link and associated Activity
+     *
+     * @param Request $request
+     * @return Response|ResponseFactory
+     * @throws ValidationException
+     */
+    public function deleteLink(Request $request)
+    {
+        // Merge JSON body with request to Validate
+        $request->merge((array)json_decode($request->getContent()));
+
+        $this->validate($request, [
+            'short_url' => ['required', 'exists:links,short']
+        ]);
+
+        $short_url = $request->json('short_url');
+
+        $link = Link::byShortUrl($short_url)->first();
+        if (!$link) {
+            return response('Link not found', 500);
+        }
+
+        try {
+            DB::beginTransaction();
+            $link->activity()->delete();
+            $link->delete();
+            DB::commit();
+            return response('Link deleted');
+
+        } catch (Exception $e) {
+
+            DB::rollBack();
+            Activity::error(null, $e->getMessage());
+            return response('Error deleting Link', 500);
+        }
+    }
+
+    /**
      * Redirect to an existing Link
      *
      * @param Request $request
@@ -92,7 +132,7 @@ class LinkController extends Controller
      * @return JsonResponse|Response|ResponseFactory
      * @throws ValidationException
      */
-    public function list(Request $request)
+    public function listLink(Request $request)
     {
         // Merge JSON body with request to Validate
         $request->merge((array)json_decode($request->getContent()));

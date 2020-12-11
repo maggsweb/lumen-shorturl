@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @method static create($array)
@@ -15,24 +14,12 @@ use Illuminate\Support\Facades\DB;
  */
 class Link extends Model
 {
-//    /**
-//     * Authenticated User
-//     *
-//     * @var Authenticatable|null
-//     */
-//    protected $authUser;
 
     protected $fillable = [
         'short',
         'long',
         'user_id'
     ];
-
-//    public function __construct(array $attributes = [])
-//    {
-//        parent::__construct($attributes);
-//        $this->authUser = Auth()->user();
-//    }
 
     /**
      * User relation
@@ -43,10 +30,14 @@ class Link extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-//    public function getRouteKeyName()
-//    {
-//        return 'short';
-//    }
+    /**
+     * Activity relation
+     * @return HasMany
+     */
+    public function activity(): HasMany
+    {
+        return $this->hasMany(Activity::class);
+    }
 
     /**
      * The current FQ domain string
@@ -58,19 +49,15 @@ class Link extends Model
     }
 
     /**
+     * Scope by short_url and current authenticated User
+     *
      * @param Builder $builder
      * @param string $short_url
      * @return Builder
      */
     public function scopeByShortUrl(Builder $builder, string $short_url): Builder
     {
-        $authUserId = Auth()->user()->getAuthIdentifier();
-
-        return $builder
-            ->join('users', 'links.user_id', '=', 'users.id')
-            ->where('short', $short_url)
-            ->where('users.id', $authUserId)
-            ->where('users.status', DB::raw("'Active'"));
+        return $builder->where('short', $short_url);
     }
 
     /**

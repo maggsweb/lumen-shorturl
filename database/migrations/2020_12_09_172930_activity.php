@@ -21,7 +21,7 @@ class Activity extends Migration
             $table->foreign('user_id')->references('id')->on('users');
 
             $table->mediumInteger('link_id')->nullable(true);
-           // $table->foreign('link_id')->references('id')->on('links');
+            $table->foreign('link_id')->references('id')->on('links'); //->onDelete('cascade');
 
             $table->enum('action', ['Create', 'Redirect', 'Error']);
             $table->text('details')->nullable(true);

@@ -22,19 +22,19 @@ $router->get('/', function () use ($router) {
 $router->group(['middleware' => 'auth'], function() use ($router) {
 
     // Create new URL
-    $router->post('/create', 'LinkController@create');
+    $router->post('/create', 'LinkController@createLink');
 
     // View Url history
-    $router->post('/list', 'LinkController@list');
+    $router->post('/link', 'LinkController@listLink');
 
     // Delete link  (and all associated  activity)  use cascade
-    //$router->delete('/link', 'LinkController@delete');
+    $router->delete('/link', 'LinkController@deleteLink');
 
     // View User history
-    $router->post('/user', 'UserController@list');
+    $router->post('/user', 'UserController@listUser');
 
     // Delete User (and all associated links & activity)  use cascade
-
+    $router->delete('/user', 'UserController@deleteUser');
 
 });
 
