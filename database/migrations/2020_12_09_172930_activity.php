@@ -17,13 +17,14 @@ class Activity extends Migration
 
             $table->bigIncrements('id');
 
-            $table->uuid('user_id')->nullable(true);
+            $table->mediumInteger('user_id')->nullable(true);
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->uuid('url_id')->nullable(false);
-            $table->foreign('url_id')->references('id')->on('urls');
+            $table->mediumInteger('link_id')->nullable(true);
+           // $table->foreign('link_id')->references('id')->on('links');
 
-            $table->enum('action', ['Create', 'List_Url', 'List_User', 'Redirect']);
+            $table->enum('action', ['Create', 'Redirect', 'Error']);
+            $table->text('details')->nullable(true);
 
             $table->dateTime('created_at');
             $table->ipAddress('ip_address');

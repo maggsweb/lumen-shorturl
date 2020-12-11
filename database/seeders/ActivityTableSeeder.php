@@ -19,7 +19,7 @@ class ActivityTableSeeder extends Seeder
         DB::table('activity')->insert([
             'id' => 1,
             'user_id' => 1,
-            'url_id' => 1,
+            'link_id' => 1,
             'action' => 'Create',
             'created_at' => Carbon::now(),
             'ip_address' => request()->ip()

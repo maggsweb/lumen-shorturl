@@ -23,7 +23,7 @@ $router->group(['middleware' => 'auth'], function() use ($router) {
     // Create new URL
     $router->post('/create', 'LinkController@create');
     // View Url history
-//    $router->post('/url', 'LinkController@read');
+    $router->post('/list', 'LinkController@list');
     // View User history
 //    $router->post('/user', 'UserController@read');
 });

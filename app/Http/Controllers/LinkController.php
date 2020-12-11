@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\Link;
-use App\Models\User;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Http\Redirector;
 use Laravel\Lumen\Http\Request;
 use Laravel\Lumen\Http\ResponseFactory;
@@ -14,7 +17,7 @@ use Laravel\Lumen\Http\ResponseFactory;
 class LinkController extends Controller
 {
     /**
-     * Return existing/new short link
+     * Return existing/new Link
      *
      * @param Request $request
      * @return Response|ResponseFactory
@@ -26,20 +29,20 @@ class LinkController extends Controller
         $request->merge((array)json_decode($request->getContent()));
 
         $this->validate($request, [
-            'long_url' => ['required','url'],
+            'long_url' => ['required','url', 'max:255'],
         ]);
-
-        /** @var User $user */
-        $user = Auth()->user();
 
         $long_url = $request->json('long_url');
 
+        $currentUserId = Auth::user()->getAuthIdentifier();
+
         // If the URL already exists for this user, return the same record
-        $existingLink = Link::where('long', $long_url)->where('user_id', $user->id)->first();
+        $existingLink = Link::where('long', $long_url)->where('user_id', $currentUserId)->first();
         if ($existingLink) {
             return response($existingLink, 200);
         }
 
+        // @TODO detect possible short_url ?
         // Otherwise, create a new record
         $short = $this->createShortCode();
 
@@ -48,17 +51,70 @@ class LinkController extends Controller
             $newLink = Link::create([
                 'short'     => $short,
                 'long'      => $long_url,
-                'user_id'   => $user->id
+                'user_id'   => $currentUserId
             ]);
+
+            Activity::new($newLink);
 
             return response($newLink, 201);
 
         } catch (Exception $e) {
 
-            // dump($e->getMessage());
+            Activity::error(null, $e->getMessage());
 
             return response('Error creating new Link', 500);
         }
+    }
+
+    /**
+     * Redirect to an existing Link
+     *
+     * @param Request $request
+     * @param $link
+     * @return RedirectResponse|Response|Redirector|ResponseFactory
+     */
+    public function redirect(Request $request, $link)
+    {
+        $link = Link::where('short', $link)->first();
+        if ($link) {
+
+            Activity::redirect($link);
+
+            return redirect($link->long);
+        }
+        return response('Link not found', 500);
+    }
+
+    /**
+     * List activity for a Link
+     *
+     * @param Request $request
+     * @return JsonResponse|Response|ResponseFactory
+     * @throws ValidationException
+     */
+    public function list(Request $request)
+    {
+        // Merge JSON body with request to Validate
+        $request->merge((array)json_decode($request->getContent()));
+
+        $this->validate($request, [
+            'short_url' => ['required'],
+        ]);
+
+        $short_url = $request->json('short_url');
+
+        $link = Link::byShortUrl($short_url)->first();
+        if (!$link) {
+            return response('Link not found', 500);
+        }
+
+        $activity = Activity::forLink($link->id);
+
+        $activityLogs = $activity->count() > 15
+            ? $activity->paginate(15)
+            : $activity->get();
+
+        return response()->json($activityLogs, 200);
     }
 
     /**
@@ -74,25 +130,6 @@ class LinkController extends Controller
             return $this->createShortCode();
         }
         return $short;
-    }
-
-    /**
-     * Redirect to an existing URL, or abort
-     *
-     * @param Request $request
-     * @param $link
-     * @return RedirectResponse|Response|Redirector|ResponseFactory
-     */
-    public function redirect(Request $request, $link)
-    {
-        $link = Link::where('short', $link)->pluck('long')->first();
-        if ($link) {
-
-            // @TODO Log access
-
-            return redirect($link);
-        }
-        return response('Link not found', 500);
     }
 
 }
