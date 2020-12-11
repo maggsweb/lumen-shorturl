@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class UsersTableSeeder extends Seeder
+class ActivityTableSeeder extends Seeder
 {
     /**
      * Run the database seeders.
@@ -16,13 +16,15 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         // Users to hard-code
-        DB::table('users')->insert([
+        DB::table('activity')->insert([
             'id' => 1,
-            'uuid' => '6985b9e8-7db1-4e8f-b8b4-6eae56d22020',
-            'status' => 'Active',
-            'name' => 'Chris Maggs',
-            'application' => 'Default Application',
-            'created_at' => Carbon::now()
+            'user_id' => 1,
+            'url_id' => 1,
+            'action' => 'Create',
+            'created_at' => Carbon::now(),
+            'ip_address' => request()->ip()
         ]);
     }
 }
+
+

@@ -32,7 +32,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @param string $uuid
      * @return Builder
      */
-    public function scopeByToken(Builder $builder, string $uuid)
+    public function scopeByToken(Builder $builder, string $uuid): Builder
     {
         return $builder
             ->where('uuid', $uuid)

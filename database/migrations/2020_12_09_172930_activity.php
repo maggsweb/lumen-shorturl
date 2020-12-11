@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AccessLog extends Migration
+class Activity extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,19 @@ class AccessLog extends Migration
      */
     public function up()
     {
-        Schema::create('access_log', function (Blueprint $table) {
+        Schema::create('activity', function (Blueprint $table) {
 
             $table->bigIncrements('id');
 
-            $table->uuid('user_id')->nullable(false);
+            $table->uuid('user_id')->nullable(true);
             $table->foreign('user_id')->references('id')->on('users');
 
             $table->uuid('url_id')->nullable(false);
             $table->foreign('url_id')->references('id')->on('urls');
 
-            $table->dateTime('date');
+            $table->enum('action', ['Create', 'List_Url', 'List_User', 'Redirect']);
+
+            $table->dateTime('created_at');
             $table->ipAddress('ip_address');
         });
     }
@@ -35,6 +37,6 @@ class AccessLog extends Migration
      */
     public function down()
     {
-        Schema::drop('access_log');
+        Schema::drop('activity');
     }
 }

@@ -22,7 +22,7 @@ class Link extends Model
      * The current FQ domain string
      * @return string
      */
-    private function getDomain()
+    private function getDomain(): string
     {
         return env('APP_URL', '');
     }
@@ -31,7 +31,7 @@ class Link extends Model
      * Return selected fields only
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'short'   => $this->attributes['short'],

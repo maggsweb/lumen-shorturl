@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Link;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -16,7 +17,7 @@ class LinkController extends Controller
      * Return existing/new short link
      *
      * @param Request $request
-     * @return string|null
+     * @return Response|ResponseFactory
      * @throws Exception
      */
     public function create(Request $request)
@@ -28,6 +29,7 @@ class LinkController extends Controller
             'long_url' => ['required','url'],
         ]);
 
+        /** @var User $user */
         $user = Auth()->user();
 
         $long_url = $request->json('long_url');
@@ -64,7 +66,7 @@ class LinkController extends Controller
      *
      * @return string
      */
-    private function createShortCode()
+    private function createShortCode(): string
     {
         $short = base_convert(rand(), 10, 32);
 
