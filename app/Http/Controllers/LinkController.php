@@ -98,7 +98,7 @@ class LinkController extends Controller
         $request->merge((array)json_decode($request->getContent()));
 
         $this->validate($request, [
-            'short_url' => ['required'],
+            'short_url' => ['required', 'exists:links,short']
         ]);
 
         $short_url = $request->json('short_url');

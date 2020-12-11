@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 /**
  * @method static create($array)
  * @method static forLink($integer)
+ * @method static forUser()
  */
 class Activity extends Model
 {
@@ -54,6 +55,22 @@ class Activity extends Model
     {
         return $builder
             ->where('link_id', $link_id)
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get Activity for a specific User
+     *
+     * @param Builder $builder
+     * @return Builder
+     */
+    public function scopeForUser(Builder $builder): Builder
+    {
+        $currentUserId = Auth::user()->getAuthIdentifier();
+
+        return $builder
+            ->whereNotIn('action', ['Error'])
+            ->where('user_id', $currentUserId)
             ->orderBy('created_at', 'desc');
     }
 
@@ -118,8 +135,8 @@ class Activity extends Model
     {
         return [
             'action' => $this->action,
-            'short' => $this->link->short,
-            'long' => $this->link->long,
+            'short' => $this->link ? $this->link->short : null,
+            'long' => $this->link ? $this->link->long : null,
             'created' => $this->created_at,
             'ip_address' => $this->ip_address
         ];

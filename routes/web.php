@@ -20,12 +20,22 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['middleware' => 'auth'], function() use ($router) {
+
     // Create new URL
     $router->post('/create', 'LinkController@create');
+
     // View Url history
     $router->post('/list', 'LinkController@list');
+
+    // Delete link  (and all associated  activity)  use cascade
+    //$router->delete('/link', 'LinkController@delete');
+
     // View User history
-//    $router->post('/user', 'UserController@read');
+    $router->post('/user', 'UserController@list');
+
+    // Delete User (and all associated links & activity)  use cascade
+
+
 });
 
 // Redirect URL
