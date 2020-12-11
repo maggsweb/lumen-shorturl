@@ -13,23 +13,19 @@ class Link extends Model
 
     protected $guarded = [];
 
+//    public function getRouteKeyName()
+//    {
+//        return 'short';
+//    }
+
     /**
-     * @var mixed
+     * The current FQ domain string
+     * @return string
      */
-    protected $domain;
-
-    public function __construct(array $attributes = [])
+    private function getDomain()
     {
-        parent::__construct($attributes);
-        $this->domain = env('APP_URL');
+        return env('APP_URL', '');
     }
-
-
-    public function getRouteKeyName()
-    {
-        return 'short';
-    }
-
 
     /**
      * Return selected fields only
@@ -39,7 +35,7 @@ class Link extends Model
     {
         return [
             'short'   => $this->attributes['short'],
-            'full'    => $this->domain . '/' . $this->attributes['short'],
+            'full'    => $this->getDomain() . '/' . $this->attributes['short'],
             'long'    => $this->attributes['long'],
             'created' => $this->attributes['created_at']
         ];

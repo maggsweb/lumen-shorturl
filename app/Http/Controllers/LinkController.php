@@ -4,27 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Link;
 use Exception;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Laravel\Lumen\Http\Redirector;
 use Laravel\Lumen\Http\Request;
+use Laravel\Lumen\Http\ResponseFactory;
 
 class LinkController extends Controller
 {
-    /**
-     * @var Authenticatable|null
-     */
-    protected $user;
-
-    /**
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->user = Auth()->user();
-    }
-
     /**
      * Return existing/new short link
      *
@@ -34,29 +21,41 @@ class LinkController extends Controller
      */
     public function create(Request $request)
     {
+        // Merge JSON body with request to Validate
+        $request->merge((array)json_decode($request->getContent()));
+
+        $this->validate($request, [
+            'long_url' => ['required','url'],
+        ]);
+
+        $user = Auth()->user();
 
         $long_url = $request->json('long_url');
 
         // If the URL already exists for this user, return the same record
-        $existingLing = Link::where('long', $long_url)->where('user_id', $this->user->id)->first();
-        if ($existingLing) {
-            return $existingLing;
+        $existingLink = Link::where('long', $long_url)->where('user_id', $user->id)->first();
+        if ($existingLink) {
+            return response($existingLink, 200);
         }
 
         // Otherwise, create a new record
-        $short = $this->createShort();
+        $short = $this->createShortCode();
 
         try {
 
-            return Link::create([
+            $newLink = Link::create([
                 'short'     => $short,
                 'long'      => $long_url,
-                'user_id'   => $this->user->id
+                'user_id'   => $user->id
             ]);
 
+            return response($newLink, 201);
+
         } catch (Exception $e) {
-            //dump($e->getMessage());
-            throw new Exception('Error creating new Link');
+
+            // dump($e->getMessage());
+
+            return response('Error creating new Link', 500);
         }
     }
 
@@ -65,27 +64,33 @@ class LinkController extends Controller
      *
      * @return string
      */
-    private function createShort()
+    private function createShortCode()
     {
         $short = base_convert(rand(), 10, 32);
+
         if (Link::where('short', $short)->exists()) {
-            return $this->createShort();
+            return $this->createShortCode();
         }
         return $short;
     }
 
-
     /**
+     * Redirect to an existing URL, or abort
+     *
      * @param Request $request
      * @param $link
-     * @return RedirectResponse|Redirector
+     * @return RedirectResponse|Response|Redirector|ResponseFactory
      */
     public function redirect(Request $request, $link)
     {
-        $link = Link::where('short', $link)->first();
+        $link = Link::where('short', $link)->pluck('long')->first();
         if ($link) {
-            return redirect($link->long);
+
+            // @TODO Log access
+
+            return redirect($link);
         }
+        return response('Link not found', 500);
     }
 
 }
