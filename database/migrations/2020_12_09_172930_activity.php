@@ -30,10 +30,10 @@ class Activity extends Migration
             $table->ipAddress('ip_address');
         });
 
-        Schema::table('activity', function($table){
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('link_id')->references('id')->on('links');
-        });
+//        Schema::table('activity', function($table){
+//            $table->foreign('user_id')->references('id')->on('users');
+//            $table->foreign('link_id')->references('id')->on('links');
+//        });
     }
 
     /**

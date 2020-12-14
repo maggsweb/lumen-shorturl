@@ -28,9 +28,9 @@ class Links extends Migration
             $table->timestamps();
         });
 
-        Schema::table('links', function($table) {
-            $table->foreign('user_id')->references('id')->on('users'); //->onDelete('cascade');
-        });
+//        Schema::table('links', function($table) {
+//            $table->foreign('user_id')->references('id')->on('users'); //->onDelete('cascade');
+//        });
     }
 
     /**
