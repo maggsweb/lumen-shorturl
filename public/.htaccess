@@ -1,4 +1,8 @@
 <IfModule mod_rewrite.c>
+
+    # Added for Ionos
+	RewriteBase /
+
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>

@@ -4,3 +4,6 @@ Homestead.json
 Homestead.yaml
 .env
 .phpunit.result.cache
+
+# 1and1 Composer binary
+composer.phar
