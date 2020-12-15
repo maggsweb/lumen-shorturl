@@ -16,8 +16,10 @@ use Laravel\Lumen\Routing\Router;
 /** @var Router $router */
 $router->get('/', function () use ($router) {
     // @TODO some sort of default page...
-    return $router->app->version();
+    //return $router->app->version();
+    return view('default');
 });
+
 
 $router->group(['middleware' => 'auth'], function() use ($router) {
 
