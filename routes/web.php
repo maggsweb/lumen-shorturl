@@ -17,32 +17,27 @@ use Laravel\Lumen\Routing\Router;
 $router->get('/', function () use ($router) {
     // @TODO some sort of default page...
     //return $router->app->version();
-    return view('homepage');
+    return view('default');
 });
-
 
 $router->group(['middleware' => 'auth'], function() use ($router) {
 
-    // Create new URL
+    // Create new Short URL
     $router->post('/create', 'LinkController@createLink');
 
-    // View Url history
+    // View Short Url redirect history
     $router->post('/link', 'LinkController@listLink');
 
-    // Delete link  (and all associated  activity)  use cascade
+    // Delete Short Url  (and all associated  activity)
     $router->delete('/link', 'LinkController@deleteLink');
 
     // View User history
     $router->post('/user', 'UserController@listUser');
 
-    // Delete User (and all associated links & activity)  use cascade
+    // Delete User (and all associated links & activity)
     $router->delete('/user', 'UserController@deleteUser');
 
 });
-
-// Test
-$router->get('/test', 'ExampleController@test');
-$router->post('/test', 'ExampleController@create');
 
 // Redirect URL
 $router->get('/{link}', 'LinkController@redirect');
