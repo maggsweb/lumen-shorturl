@@ -17,10 +17,10 @@ class Activity extends Migration
 
             $table->bigIncrements('id');
 
-            $table->mediumInteger('user_id')->unsigned()->nullable(true);
+            $table->mediumInteger('user_id')->unsigned()->nullable(true)->index();
             //$table->foreign('user_id')->references('id')->on('users');
 
-            $table->mediumInteger('link_id')->unsigned()->nullable(true);
+            $table->mediumInteger('link_id')->unsigned()->nullable(true)->index();
             //$table->foreign('link_id')->references('id')->on('links'); //->onDelete('cascade');
 
             $table->enum('action', ['Create', 'Redirect', 'Error']);

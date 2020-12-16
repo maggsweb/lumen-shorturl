@@ -17,7 +17,7 @@ use Laravel\Lumen\Routing\Router;
 $router->get('/', function () use ($router) {
     // @TODO some sort of default page...
     //return $router->app->version();
-    return view('default');
+    return view('homepage');
 });
 
 
@@ -39,6 +39,10 @@ $router->group(['middleware' => 'auth'], function() use ($router) {
     $router->delete('/user', 'UserController@deleteUser');
 
 });
+
+// Test
+$router->get('/test', 'ExampleController@test');
+$router->post('/test', 'ExampleController@create');
 
 // Redirect URL
 $router->get('/{link}', 'LinkController@redirect');

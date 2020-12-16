@@ -24,5 +24,14 @@ class UsersTableSeeder extends Seeder
             'application' => 'Default Application',
             'created_at' => Carbon::now()
         ]);
+
+        DB::table('users')->insert([
+            'id' => 2,
+            'uuid' => 'f1b41b1f-7d94-4424-a387-c96ec3a65521',
+            'status' => 'Active',
+            'name' => 'Temp User',
+            'application' => 'Default Application',
+            'created_at' => Carbon::now()
+        ]);
     }
 }

@@ -2,9 +2,12 @@
         MaggsWEB LOGO   #logo
 -----------------------------------*/
 @import url('mwcsslogo.css');
-@import url(http://fonts.googleapis.com/css?family=Lato:400,700,300);
 
 /* Blue : #298CAD */
+
+html, body {
+    height: calc(100% - 30px);
+}
 
 body {
     background-color: #f2f2f2;
@@ -13,103 +16,48 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-h1,h2,h3,h4,h5,h6,button,a.btn,input,blockquote {
-    margin:0;
-    padding:0;
-    font-family: 'Lato', sans-serif;
-    font-weight:400;
+.container {
+    background-color: #ffffff;
+    background-image: url('/schematic.jpg');
+    background-repeat: no-repeat;
+    background-position: top left;
+    padding: 30px 20px;
+    min-height: 100%;
 }
 
-
-
-/*.homepage,*/
-/*.content {*/
-/*    background-color: #ffffff;*/
-/*    background-image: url(../images/schematic.jpg);*/
-/*    background-repeat: no-repeat;*/
-/*    background-position: top left;*/
-/*    padding: 30px 20px;*/
-/*    min-height: 400px;*/
-/*}*/
-
 h1 {
-    font-size: 36px;
-    font-weight: 400;
-    line-height: 50px;
-    margin: 10px 0px;
-    color: #298CAD;
-    letter-spacing: 3px;
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 30px;
+    margin: 20px 0;
+    color: #000000;
+    text-align: center;
     text-shadow: 1px 1px 1px #686868;
 }
 
 h2 {
-    font-size: 30px;
-    font-weight: 300;
-    line-height: 30px;
-    margin: 20px 0px;
-    color: #000000;
-    letter-spacing: 2px;
-    text-shadow: 1px 1px 1px #686868;
-}
-
-h3 {
     font-size: 16px;
     line-height: 20px;
-    margin: 10px 0px;
+    margin: 10px 0;
+    text-align: center;
+    letter-spacing: 1px;
     color: #333333;
 }
 
-h4 {
-    font-size: 16px;
-    line-height: 18px;
-    margin: 10px 0px;
-}
-
-blockquote {
-    font-size: inherit;
-    border:      1px solid #298CAD;
-    border-left: 5px solid #298CAD;
-    margin: 20px 0px;
-    padding: 10px;
-}
-
-/*  TYPOGOGRAPHY  ----------------------------------   */
-/*  ------------------------------------------------   */
-
-a {
-    color: #7b7b7b;
-    word-wrap: break-word;
-    -webkit-transition: color 0.2s ease-in, background 0.2s ease-in;
-    -moz-transition: color 0.2s ease-in, background 0.2s ease-in;
-    -ms-transition: color 0.2s ease-in, background 0.2s ease-in;
-    -o-transition: color 0.2s ease-in, background 0.2s ease-in;
-    transition: color 0.2s ease-in, background 0.2s ease-in;
-}
-
-a:before, a:after {
-    -webkit-transition: color 0.2s ease-in, background 0.2s ease-in;
-    -moz-transition: color 0.2s ease-in, background 0.2s ease-in;
-    -ms-transition: color 0.2s ease-in, background 0.2s ease-in;
-    -o-transition: color 0.2s ease-in, background 0.2s ease-in;
-    transition: color 0.2s ease-in, background 0.2s ease-in;
-}
-
-a:hover,
-a:focus {
-    color: #ffffff;
-    text-decoration: none;
-    outline: 0;
-}
-
-hr {
+h1 + hr {
     display: block;
     height: 1px;
     border: 0;
     border-top: 1px solid #ccc;
-    margin: 1em 0;
+    margin: 1em auto;
     padding: 0;
+    width: 220px;
 }
 
-i:hover {
-    cursor: help;
-}
+/*blockquote {*/
+/*    font-size: inherit;*/
+/*    border:      1px solid #298CAD;*/
+/*    border-left: 5px solid #298CAD;*/
+/*    margin: 20px 0px;*/
+/*    padding: 10px;*/
+/*}*/

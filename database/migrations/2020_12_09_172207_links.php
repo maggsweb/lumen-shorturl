@@ -18,7 +18,7 @@ class Links extends Migration
             $table->bigIncrements('id');
 
             // User
-            $table->mediumInteger('user_id')->unsigned()->nullable(false);
+            $table->mediumInteger('user_id')->unsigned()->nullable(false)->index();
             //$table->foreign('user_id')->references('id')->on('users'); //->onDelete('cascade');
 
             // URL
