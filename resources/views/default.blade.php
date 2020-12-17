@@ -28,12 +28,14 @@
                     <hr>
                     <h2>A back-end API in Lumen 8</h2>
                     <p>
-                        <a target="_blank" href="https://github.com/maggsweb/lumen-shorturl">github.com/maggsweb/lumen-shorturl</a>
+                        <a target="_blank" href="https://maggsweb.github.io/lumen-shorturl/">maggsweb.github.io/lumen-shorturl/</a>
                     </p>
                     <!--
-                    change link to github.io
                     add link to test page
                     -->
+                    <p>
+                        <a target="_blank" href="https://github.styleci.io/repos/319776559?branch=master"><img src="https://github.styleci.io/repos/319776559/shield?branch=master" alt="StyleCI"></a>
+                    </p>
                 </div>
             </div>
         </div>
