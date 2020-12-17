@@ -68,7 +68,7 @@ class Link extends Model
     {
         return [
             'short'   => $this->short,
-            'full'    => $this->getDomain() . $this->short,
+            'full'    => $this->getDomain() . '/' . $this->short,
             'long'    => $this->long,
             'created' => $this->created_at
         ];

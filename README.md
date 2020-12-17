@@ -1,81 +1,79 @@
 # MaggsWeb ShortUrl API
 
-#### Uses Lumen v8
-
-A back-end URL Shortener API in Lumen 8
-
-<hr>
-
-Each user has a unique API Key
-
-```apacheconf
-$api_key = '<unique-token>';
-```
-
-Create a new ShortURL
-
-```php
-$api_url = '../create'; 
-
-$payload = json_encode([
-    'long_url' => $_REQUEST['short_url']
-]);
-```
-
-View Short Url redirect history (optional filter by Short URL)
-
-```php
-$api_url = '../link'; 
-
-$payload = json_encode([
-    'long_url' => $_REQUEST['short_url']    // Optional filter
-]);
-```
-
-View User history  (optional filter by Short URL)
-
-```php
-$api_url = '../user'; 
-
-$payload = json_encode([
-    'long_url' => $_REQUEST['short_url']    // Optional filter
-]);
-```
-
-
-
+A back-end URL Shortener API
+- Built with Lumen v8
+- Uses GuzzleHttp\Client
+- Secured by unique API Key
 
 <hr>
 
-## Using Guzzle
+### Create a new ShortURL from a URL
+#### with optional suggested short url
 
 ```php
-use GuzzleHttp\Client;
-
 $client = new Client([
-    'headers' => [
-        'token' => $api_key
-    ]
+    'headers' => ['token' => $api_token]
 ]);
-$response = $client->post($api_url, [
-    'body' => $payload
-    ]
-);
-$data = $response->getBody()->getContents();
+$response = $client->post($host.'/create', [
+    'body' => json_encode([
+        'long_url' => $long_url,
+        'short_url' => $suggested_short_url // optional
+    ])
+]);
+return $response->getBody()->getContents();
 ```
 
-
-## Using cURL
+### View ShortUrl redirect history
 
 ```php
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $api_url);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["token:$api_key"]);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-
-$data = curl_exec($ch);
-curl_close($ch);
+$client = new Client([
+    'headers' => ['token' => $api_token]
+]);
+$response = $client->post($host.'/link', [
+    'body' => json_encode([
+        'short_url' => $short_url
+    ])
+]);
+return $response->getBody()->getContents();
 ```
 
+### View User history
+####  (optionally filtered by ShortURL)
+
+```php
+$client = new Client([
+    'headers' => ['token' => $api_token]
+]);
+$response = $client->post($host.'/user', [
+    'body' => json_encode([                 
+        'short_url' => $short_url // optional filter
+    ])
+]);
+return $response->getBody()->getContents();
+```
+
+### Delete Short Url
+#### and associated activity
+
+```php
+$client = new Client([
+    'headers' => ['token' => $api_token]
+]);
+$response = $client->delete($host.'/link', [
+    'body' => json_encode([                 
+        'short_url' => $_REQUEST['short_url']
+    ])
+]);
+return $response->getBody()->getContents();
+```
+
+### Delete User Account
+#### and all associated links & activity
+
+```php
+$client = new Client([
+    'headers' => ['token' => $api_token]
+]);
+$response = $client->delete($host.'/user');
+return $response->getBody()->getContents();
+```

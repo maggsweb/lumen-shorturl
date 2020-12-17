@@ -28,13 +28,13 @@ $router->group(['middleware' => 'auth'], function() use ($router) {
     // View Short Url redirect history
     $router->post('/link', 'LinkController@listLink');
 
-    // Delete Short Url  (and all associated  activity)
-    $router->delete('/link', 'LinkController@deleteLink');
-
-    // View User history
+    // View User history (optionally filtered by short URL)
     $router->post('/user', 'UserController@listUser');
 
-    // Delete User (and all associated links & activity)
+    // Delete Short Url (and associated activity)
+    $router->delete('/link', 'LinkController@deleteLink');
+
+    // Delete User Account (and all associated links & activity)
     $router->delete('/user', 'UserController@deleteUser');
 
 });

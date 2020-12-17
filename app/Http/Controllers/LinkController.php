@@ -32,9 +32,11 @@ class LinkController extends Controller
 
         $this->validate($request, [
             'long_url' => ['required','url', 'max:255'],
+            'short_url' => ['sometimes', 'min:5', 'max:20', 'alpha']
         ]);
 
         $long_url = $request->json('long_url');
+        $suggested_short_url = $request->json('short_url');
 
         $currentUserId = Auth::user()->getAuthIdentifier();
 
@@ -44,9 +46,8 @@ class LinkController extends Controller
             return response($existingLink, 200);
         }
 
-        // @TODO detect possible short_url ?
         // Otherwise, create a new record
-        $short = $this->createShortCode();
+        $short = $this->createShortCode($suggested_short_url);
 
         try {
 
@@ -160,10 +161,15 @@ class LinkController extends Controller
     /**
      * Generate a base32 random unique string, or retry
      *
+     * @param null $suggested
      * @return string
      */
-    private function createShortCode(): string
+    private function createShortCode($suggested=null): string
     {
+        if ($suggested && !Link::where('short', $suggested)->exists()) {
+            return $suggested;
+        }
+
         $short = base_convert(rand(), 10, 32);
 
         if (Link::where('short', $short)->exists()) {
