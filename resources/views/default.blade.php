@@ -30,6 +30,10 @@
                     <p>
                         <a target="_blank" href="https://github.com/maggsweb/lumen-shorturl">github.com/maggsweb/lumen-shorturl</a>
                     </p>
+                    <!--
+                    change link to github.io
+                    add link to test page
+                    -->
                 </div>
             </div>
         </div>
