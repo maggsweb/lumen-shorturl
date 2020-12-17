@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -14,15 +14,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Link extends Model
 {
-
     protected $fillable = [
         'short',
         'long',
-        'user_id'
+        'user_id',
     ];
 
     /**
-     * User relation
+     * User relation.
+     *
      * @return BelongsTo
      */
     public function user(): BelongsTo
@@ -31,7 +31,8 @@ class Link extends Model
     }
 
     /**
-     * Activity relation
+     * Activity relation.
+     *
      * @return HasMany
      */
     public function activity(): HasMany
@@ -40,7 +41,8 @@ class Link extends Model
     }
 
     /**
-     * The current FQ domain string
+     * The current FQ domain string.
+     *
      * @return string
      */
     private function getDomain(): string
@@ -49,10 +51,11 @@ class Link extends Model
     }
 
     /**
-     * Scope by short_url and current authenticated User
+     * Scope by short_url and current authenticated User.
      *
      * @param Builder $builder
-     * @param string $short_url
+     * @param string  $short_url
+     *
      * @return Builder
      */
     public function scopeByShortUrl(Builder $builder, string $short_url): Builder
@@ -61,17 +64,17 @@ class Link extends Model
     }
 
     /**
-     * Return selected fields only
+     * Return selected fields only.
+     *
      * @return array
      */
     public function toArray(): array
     {
         return [
             'short'   => $this->short,
-            'full'    => $this->getDomain() . '/' . $this->short,
+            'full'    => $this->getDomain().'/'.$this->short,
             'long'    => $this->long,
-            'created' => $this->created_at
+            'created' => $this->created_at,
         ];
     }
-
 }

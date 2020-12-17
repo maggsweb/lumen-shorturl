@@ -17,11 +17,11 @@ class LinksTableSeeder extends Seeder
     {
         // Users to hard-code
         DB::table('links')->insert([
-            'id' => 1,
-            'user_id' => 1,
-            'short' => 'google',
-            'long' => 'http://www.google.co.uk',
-            'created_at' => Carbon::now()
+            'id'         => 1,
+            'user_id'    => 1,
+            'short'      => 'google',
+            'long'       => 'http://www.google.co.uk',
+            'created_at' => Carbon::now(),
         ]);
     }
 }

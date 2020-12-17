@@ -15,11 +15,10 @@ use Illuminate\Support\Facades\Auth;
  */
 class Activity extends Model
 {
-
     protected $table = 'activity';
 
     protected $with = [
-        'link'
+        'link',
     ];
 
     public function link(): BelongsTo
@@ -39,16 +38,16 @@ class Activity extends Model
     }
 
     /**
-     *
      * @var array
      */
-    protected $guarded = [ ];
+    protected $guarded = [];
 
     /**
-     * Get Activity for a specific link
+     * Get Activity for a specific link.
      *
      * @param Builder $builder
-     * @param int $link_id
+     * @param int     $link_id
+     *
      * @return Builder
      */
     public function scopeForLink(Builder $builder, int $link_id): Builder
@@ -59,9 +58,10 @@ class Activity extends Model
     }
 
     /**
-     * Get Activity for a specific User
+     * Get Activity for a specific User.
      *
      * @param Builder $builder
+     *
      * @return Builder
      */
     public function scopeForUser(Builder $builder): Builder
@@ -75,22 +75,22 @@ class Activity extends Model
     }
 
     /**
-     * Log a Redirect Link
+     * Log a Redirect Link.
      *
      * @param Link $link
      */
     public static function redirect(Link $link)
     {
         Activity::create([
-            'link_id' => $link->id,
-            'action' => 'Redirect',
+            'link_id'    => $link->id,
+            'action'     => 'Redirect',
             'created_at' => Carbon::now(),
-            'ip_address' => request()->ip()
+            'ip_address' => request()->ip(),
         ]);
     }
 
     /**
-     * Log a new Link created
+     * Log a new Link created.
      *
      * @param Link $link
      */
@@ -99,47 +99,47 @@ class Activity extends Model
         $currentUserId = Auth::user()->getAuthIdentifier();
 
         Activity::create([
-            'user_id' => $currentUserId ?? null,
-            'link_id' => $link->id,
-            'action' => 'Create',
+            'user_id'    => $currentUserId ?? null,
+            'link_id'    => $link->id,
+            'action'     => 'Create',
             'created_at' => Carbon::now(),
-            'ip_address' => request()->ip()
+            'ip_address' => request()->ip(),
         ]);
     }
 
     /**
-     * Log an Error
+     * Log an Error.
      *
      * @param Link|null $link
-     * @param string $details
+     * @param string    $details
      */
     public static function error(Link $link = null, string $details = '')
     {
         $currentUserId = Auth::user()->getAuthIdentifier();
 
         Activity::create([
-            'user_id' => $currentUserId ?? null,
-            'link_id' => $link ? $link->id : null,
-            'action' => 'Error',
-            'details' => $details,
+            'user_id'    => $currentUserId ?? null,
+            'link_id'    => $link ? $link->id : null,
+            'action'     => 'Error',
+            'details'    => $details,
             'created_at' => Carbon::now(),
-            'ip_address' => request()->ip()
+            'ip_address' => request()->ip(),
         ]);
     }
 
     /**
-     * Return selected fields only
+     * Return selected fields only.
+     *
      * @return array
      */
     public function toArray(): array
     {
         return [
-            'action' => $this->action,
-            'short' => $this->link ? $this->link->short : null,
-            'long' => $this->link ? $this->link->long : null,
-            'created' => $this->created_at,
-            'ip_address' => $this->ip_address
+            'action'     => $this->action,
+            'short'      => $this->link ? $this->link->short : null,
+            'long'       => $this->link ? $this->link->long : null,
+            'created'    => $this->created_at,
+            'ip_address' => $this->ip_address,
         ];
     }
-
 }

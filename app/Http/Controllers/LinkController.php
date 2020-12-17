@@ -17,22 +17,23 @@ use Laravel\Lumen\Http\ResponseFactory;
 
 class LinkController extends Controller
 {
-
     /**
-     * Return existing/new Link
+     * Return existing/new Link.
      *
      * @param Request $request
-     * @return Response|ResponseFactory
+     *
      * @throws Exception
+     *
+     * @return Response|ResponseFactory
      */
     public function createLink(Request $request)
     {
         // Merge JSON body with request to Validate
-        $request->merge((array)json_decode($request->getContent()));
+        $request->merge((array) json_decode($request->getContent()));
 
         $this->validate($request, [
-            'long_url' => ['required','url', 'max:255'],
-            'short_url' => ['sometimes', 'min:5', 'max:20', 'alpha']
+            'long_url'  => ['required', 'url', 'max:255'],
+            'short_url' => ['sometimes', 'min:5', 'max:20', 'alpha'],
         ]);
 
         $long_url = $request->json('long_url');
@@ -50,19 +51,16 @@ class LinkController extends Controller
         $short = $this->createShortCode($suggested_short_url);
 
         try {
-
             $newLink = Link::create([
                 'short'     => $short,
                 'long'      => $long_url,
-                'user_id'   => $currentUserId
+                'user_id'   => $currentUserId,
             ]);
 
             Activity::new($newLink);
 
             return response($newLink, 201);
-
         } catch (Exception $e) {
-
             Activity::error(null, $e->getMessage());
 
             return response('Error creating new Link', 500);
@@ -70,19 +68,21 @@ class LinkController extends Controller
     }
 
     /**
-     * Delete a Link and associated Activity
+     * Delete a Link and associated Activity.
      *
      * @param Request $request
-     * @return Response|ResponseFactory
+     *
      * @throws ValidationException
+     *
+     * @return Response|ResponseFactory
      */
     public function deleteLink(Request $request)
     {
         // Merge JSON body with request to Validate
-        $request->merge((array)json_decode($request->getContent()));
+        $request->merge((array) json_decode($request->getContent()));
 
         $this->validate($request, [
-            'short_url' => ['required', 'exists:links,short']
+            'short_url' => ['required', 'exists:links,short'],
         ]);
 
         $short_url = $request->json('short_url');
@@ -97,49 +97,52 @@ class LinkController extends Controller
             $link->activity()->delete();
             $link->delete();
             DB::commit();
+
             return response('Link deleted');
-
         } catch (Exception $e) {
-
             DB::rollBack();
             Activity::error(null, $e->getMessage());
+
             return response('Error deleting Link', 500);
         }
     }
 
     /**
-     * Redirect to an existing Link
+     * Redirect to an existing Link.
      *
      * @param Request $request
      * @param $link
+     *
      * @return RedirectResponse|Response|Redirector|ResponseFactory
      */
     public function redirect(Request $request, $link)
     {
         $link = Link::where('short', $link)->first();
         if ($link) {
-
             Activity::redirect($link);
 
             return redirect($link->long);
         }
+
         return response('Link not found', 500);
     }
 
     /**
-     * List activity for a Link
+     * List activity for a Link.
      *
      * @param Request $request
-     * @return JsonResponse|Response|ResponseFactory
+     *
      * @throws ValidationException
+     *
+     * @return JsonResponse|Response|ResponseFactory
      */
     public function listLink(Request $request)
     {
         // Merge JSON body with request to Validate
-        $request->merge((array)json_decode($request->getContent()));
+        $request->merge((array) json_decode($request->getContent()));
 
         $this->validate($request, [
-            'short_url' => ['required', 'exists:links,short']
+            'short_url' => ['required', 'exists:links,short'],
         ]);
 
         $short_url = $request->json('short_url');
@@ -159,12 +162,13 @@ class LinkController extends Controller
     }
 
     /**
-     * Generate a base32 random unique string, or retry
+     * Generate a base32 random unique string, or retry.
      *
      * @param null $suggested
+     *
      * @return string
      */
-    private function createShortCode($suggested=null): string
+    private function createShortCode($suggested = null): string
     {
         if ($suggested && !Link::where('short', $suggested)->exists()) {
             return $suggested;
@@ -175,7 +179,7 @@ class LinkController extends Controller
         if (Link::where('short', $short)->exists()) {
             return $this->createShortCode();
         }
+
         return $short;
     }
-
 }
