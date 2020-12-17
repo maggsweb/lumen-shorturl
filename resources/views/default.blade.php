@@ -19,24 +19,20 @@
         </div>
     </nav>
     <div class="container content">
-        <div class="row bgimage">
-            <div class="row">
-                <div class="col-sm-6">
-                </div>
-                <div class="col-sm-6">
-                    <h1> URL Shortner API</h1>
+        <div class="row ">
+                <div class="col-sm-4">
+                    <h1>URL Shortner API</h1>
                     <hr>
                     <h2>A back-end API in Lumen 8</h2>
                     <p>
                         <a target="_blank" href="https://maggsweb.github.io/lumen-shorturl/">maggsweb.github.io/lumen-shorturl/</a>
                     </p>
-                    <!--
-                    add link to test page
-                    -->
                     <p>
                         <a target="_blank" href="https://github.styleci.io/repos/319776559?branch=master"><img src="https://github.styleci.io/repos/319776559/shield?branch=master" alt="StyleCI"></a>
                     </p>
                 </div>
+            <div class="col-sm-8 bgimage">
+
             </div>
         </div>
     </div>

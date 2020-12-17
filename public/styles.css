@@ -52,7 +52,7 @@ body {
 .bgimage {
     background-image: url('https://www.chrismaggs.co.uk/images/schematic.jpg');
     background-repeat: no-repeat;
-    background-position: top center;
+    background-position: top left;
     min-height: 520px;
 }
 
