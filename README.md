@@ -1,5 +1,7 @@
 # MaggsWeb ShortUrl API
 
+[![StyleCI](https://github.styleci.io/repos/319776559/shield?branch=master)](https://github.styleci.io/repos/319776559?branch=master)
+
 A back-end URL Shortener API
 - Built with Lumen v8
 - Uses GuzzleHttp\Client
