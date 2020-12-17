@@ -14,7 +14,6 @@ class Links extends Migration
     public function up()
     {
         Schema::create('links', function (Blueprint $table) {
-
             $table->bigIncrements('id');
 
             // User
@@ -23,7 +22,7 @@ class Links extends Migration
 
             // URL
             $table->string('short')->unique()->nullable(false);
-            $table->string("long")->nullable(false);
+            $table->string('long')->nullable(false);
 
             $table->timestamps();
         });

@@ -15,22 +15,23 @@ use Laravel\Lumen\Http\ResponseFactory;
 
 class UserController extends Controller
 {
-
     /**
      * List activity for a User
-     *  - optionally filter vy 'short_url'
+     *  - optionally filter vy 'short_url'.
      *
      * @param Request $request
-     * @return JsonResponse|Response|ResponseFactory
+     *
      * @throws ValidationException
+     *
+     * @return JsonResponse|Response|ResponseFactory
      */
     public function listUser(Request $request)
     {
         // Merge JSON body with request to Validate
-        $request->merge((array)json_decode($request->getContent()));
+        $request->merge((array) json_decode($request->getContent()));
 
         $this->validate($request, [
-            'short_url' => ['sometimes', 'exists:links,short']
+            'short_url' => ['sometimes', 'exists:links,short'],
         ]);
 
         // Activity by User
@@ -51,8 +52,7 @@ class UserController extends Controller
     }
 
     /**
-     * Delete a User, Links and Activity
-     *
+     * Delete a User, Links and Activity.
      */
     public function deleteUser()
     {
@@ -61,7 +61,7 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
             // Delete User Links and Link Activity
-            $authUser->links->each(function($link){
+            $authUser->links->each(function ($link) {
                 $link->activity()->delete();
                 $link->delete();
             });
@@ -72,13 +72,11 @@ class UserController extends Controller
             DB::commit();
 
             return response('User deleted');
-
         } catch (Exception $e) {
-
             DB::rollBack();
             Activity::error(null, $e->getMessage());
+
             return response('Error deleting User', 500);
         }
     }
-
 }

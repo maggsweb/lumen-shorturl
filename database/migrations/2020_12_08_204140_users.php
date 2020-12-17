@@ -14,7 +14,6 @@ class Users extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-
             $table->bigIncrements('id');
 
             // UUID, to add to Header Requests, Unique, Indexed, Required..
@@ -24,8 +23,8 @@ class Users extends Migration
             $table->enum('status', ['Active', 'InActive'])->default('Active');
 
             // Name and Application
-            $table->string("name")->nullable(false);
-            $table->string("application")->nullable(false);
+            $table->string('name')->nullable(false);
+            $table->string('application')->nullable(false);
 
             $table->timestamps();
         });

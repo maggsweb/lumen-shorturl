@@ -19,6 +19,7 @@ class Authenticate
      * Create a new middleware instance.
      *
      * @param Auth $auth
+     *
      * @return void
      */
     public function __construct(Auth $auth)
@@ -29,9 +30,10 @@ class Authenticate
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
+     * @param Request     $request
+     * @param Closure     $next
      * @param string|null $guard
+     *
      * @return mixed
      */
     public function handle(Request $request, Closure $next, $guard = null)
@@ -39,6 +41,7 @@ class Authenticate
         if ($this->auth->guard($guard)->guest()) {
             return response('Unauthorized.', 401);
         }
+
         return $next($request);
     }
 }

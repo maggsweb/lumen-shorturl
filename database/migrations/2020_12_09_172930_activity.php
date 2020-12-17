@@ -14,7 +14,6 @@ class Activity extends Migration
     public function up()
     {
         Schema::create('activity', function (Blueprint $table) {
-
             $table->bigIncrements('id');
 
             $table->mediumInteger('user_id')->unsigned()->nullable(true)->index();

@@ -14,13 +14,13 @@
 use Laravel\Lumen\Routing\Router;
 
 /** @var Router $router */
-$router->get('/', function () use ($router) {
+$router->get('/', function () {
     // @TODO some sort of default page...
     //return $router->app->version();
     return view('default');
 });
 
-$router->group(['middleware' => 'auth'], function() use ($router) {
+$router->group(['middleware' => 'auth'], function () use ($router) {
 
     // Create new Short URL
     $router->post('/create', 'LinkController@createLink');
@@ -36,7 +36,6 @@ $router->group(['middleware' => 'auth'], function() use ($router) {
 
     // Delete User Account (and all associated links & activity)
     $router->delete('/user', 'UserController@deleteUser');
-
 });
 
 // Redirect URL

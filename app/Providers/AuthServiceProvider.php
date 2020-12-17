@@ -34,6 +34,7 @@ class AuthServiceProvider extends ServiceProvider
                 // Lookup a valid User
                 return User::byToken($token)->first();
             }
+
             return null;
         });
     }

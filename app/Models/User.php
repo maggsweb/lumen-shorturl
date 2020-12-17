@@ -14,19 +14,20 @@ use Laravel\Lumen\Auth\Authorizable;
 /**
  * @method static byToken($string)
  * @method static delete()
+ *
  * @property $links
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-
-    use Authenticatable, Authorizable;
+    use Authenticatable;
+    use Authorizable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [ ];
+    protected $fillable = [];
 
     /**
      * @return HasMany
@@ -45,10 +46,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Scope a valid User
+     * Scope a valid User.
      *
      * @param Builder $builder
-     * @param string $uuid
+     * @param string  $uuid
+     *
      * @return Builder
      */
     public function scopeByToken(Builder $builder, string $uuid): Builder
@@ -57,5 +59,4 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->where('uuid', $uuid)
             ->where('status', DB::raw("'Active'"));
     }
-
 }
