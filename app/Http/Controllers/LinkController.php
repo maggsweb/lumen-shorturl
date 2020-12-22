@@ -22,9 +22,9 @@ class LinkController extends Controller
      *
      * @param Request $request
      *
-     * @return Response|ResponseFactory
      * @throws Exception
      *
+     * @return Response|ResponseFactory
      */
     public function createLink(Request $request)
     {

@@ -25,12 +25,11 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Setup test User
+     * Setup test User.
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->create(); // ->make(); does not save model to db
     }
-
 }
