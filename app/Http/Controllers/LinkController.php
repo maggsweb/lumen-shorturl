@@ -7,15 +7,13 @@ use App\Models\Link;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Http\Redirector;
-use Laravel\Lumen\Http\Request;
 use Laravel\Lumen\Http\ResponseFactory;
-
-use Illuminate\Support\Facades\Validator;
 
 class LinkController extends Controller
 {
@@ -24,51 +22,21 @@ class LinkController extends Controller
      *
      * @param Request $request
      *
+     * @return Response|ResponseFactory
      * @throws Exception
      *
-  //   * @return Response|ResponseFactory
      */
     public function createLink(Request $request)
     {
-
-//        dump($request->isJson());
-//        dump($request->all());
-//        dump($request->getContent());
-//        dump($request->json());
-//        dump($request->json()->all());
-//        dump($request->input());
-        dump($request);
-//        dump($request->json('long_url'));
-//        dump('---');
-//        exit;
-
-
-
-//        $data = (array) json_decode($request->getContent(), true);
-//        dump($data);
-//
-//        $validator = Validator::make($data, [
-//            'long_url'  => ['required', 'url', 'max:255'],
-//            'short_url' => ['sometimes', 'min:5', 'max:20', 'alpha'],
-//        ]);
-//
-//        if (!$validator->passes()) {
-//            $errors = $validator->errors()->all();
-//            return response($errors,422);
-//        }
-
-
-
         // Merge JSON body with request to Validate
         $data = $request->merge((array) json_decode($request->getContent()));
-        dump($data);
 
         $this->validate($data, [
             'long_url'  => ['required', 'url', 'max:255'],
             'short_url' => ['sometimes', 'min:5', 'max:20', 'alpha'],
         ]);
 
-        $long_url = $request->json('long_url') || 'dsgdsfgsdfg';
+        $long_url = $request->json('long_url');
         $suggested_short_url = $request->json('short_url');
 
         $currentUserId = Auth::user()->getAuthIdentifier();

@@ -39,7 +39,7 @@ class AuthServiceProvider extends ServiceProvider
             }
 
 
-            //return response()->json(['error' => 'Json Payload must contain id array i.e. {id:[]}'],400);
+//            return response()->json(['error' => 'Json Payload must contain id array i.e. {id:[]}'],500);
 
             return null;
         });
