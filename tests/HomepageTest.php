@@ -3,7 +3,8 @@
 class HomepageTest extends TestCase
 {
     /**
-     * Check Homepage exists
+     * Check Homepage exists.
+     *
      * @test
      */
     public function getHomepage()
@@ -20,5 +21,4 @@ class HomepageTest extends TestCase
             $this->response->getContent()
         );
     }
-
 }
