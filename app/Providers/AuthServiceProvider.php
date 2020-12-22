@@ -30,10 +30,16 @@ class AuthServiceProvider extends ServiceProvider
         // the User instance via an API token or any other method necessary.
 
         $this->app['auth']->viaRequest('api', function ($request) {
+
+            //return User::all()->first();
+
             if ($token = $request->header('token')) {
                 // Lookup a valid User
                 return User::byToken($token)->first();
             }
+
+
+            //return response()->json(['error' => 'Json Payload must contain id array i.e. {id:[]}'],400);
 
             return null;
         });

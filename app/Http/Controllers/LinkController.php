@@ -15,6 +15,8 @@ use Laravel\Lumen\Http\Redirector;
 use Laravel\Lumen\Http\Request;
 use Laravel\Lumen\Http\ResponseFactory;
 
+use Illuminate\Support\Facades\Validator;
+
 class LinkController extends Controller
 {
     /**
@@ -24,19 +26,49 @@ class LinkController extends Controller
      *
      * @throws Exception
      *
-     * @return Response|ResponseFactory
+  //   * @return Response|ResponseFactory
      */
     public function createLink(Request $request)
     {
-        // Merge JSON body with request to Validate
-        $request->merge((array) json_decode($request->getContent()));
 
-        $this->validate($request, [
+//        dump($request->isJson());
+//        dump($request->all());
+//        dump($request->getContent());
+//        dump($request->json());
+//        dump($request->json()->all());
+//        dump($request->input());
+        dump($request);
+//        dump($request->json('long_url'));
+//        dump('---');
+//        exit;
+
+
+
+//        $data = (array) json_decode($request->getContent(), true);
+//        dump($data);
+//
+//        $validator = Validator::make($data, [
+//            'long_url'  => ['required', 'url', 'max:255'],
+//            'short_url' => ['sometimes', 'min:5', 'max:20', 'alpha'],
+//        ]);
+//
+//        if (!$validator->passes()) {
+//            $errors = $validator->errors()->all();
+//            return response($errors,422);
+//        }
+
+
+
+        // Merge JSON body with request to Validate
+        $data = $request->merge((array) json_decode($request->getContent()));
+        dump($data);
+
+        $this->validate($data, [
             'long_url'  => ['required', 'url', 'max:255'],
             'short_url' => ['sometimes', 'min:5', 'max:20', 'alpha'],
         ]);
 
-        $long_url = $request->json('long_url');
+        $long_url = $request->json('long_url') || 'dsgdsfgsdfg';
         $suggested_short_url = $request->json('short_url');
 
         $currentUserId = Auth::user()->getAuthIdentifier();
