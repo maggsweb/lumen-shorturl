@@ -2,7 +2,6 @@
 
 class ShortUrlTest extends TestCase
 {
-
     public function testMissingHeaderToken()
     {
         $this->post('/create');
@@ -18,7 +17,7 @@ class ShortUrlTest extends TestCase
     public function testInvalidHeaderToken()
     {
         $header = [
-            'HTTP_token' => '123456789'
+            'HTTP_token' => '123456789',
         ];
 
         $this->post('/create', [], $header);
@@ -35,7 +34,7 @@ class ShortUrlTest extends TestCase
     {
         $data = [];
         $header = [
-            'HTTP_token' => $this->user->uuid
+            'HTTP_token' => $this->user->uuid,
         ];
 
         $this->post('/create', $data, $header);
@@ -47,11 +46,11 @@ class ShortUrlTest extends TestCase
     public function testInvalidBody()
     {
         $data = [
-            'long_url' => 'some-invalid-url'
+            'long_url' => 'some-invalid-url',
         ];
 
         $header = [
-            'HTTP_token' => $this->user->uuid
+            'HTTP_token' => $this->user->uuid,
         ];
 
         $this->post('/create', $data, $header);
@@ -65,11 +64,11 @@ class ShortUrlTest extends TestCase
         $url = 'http://www.my-valid-url.com';
 
         $data = [
-            'long_url' => $url
+            'long_url' => $url,
         ];
 
         $header = [
-            'HTTP_token' => $this->user->uuid
+            'HTTP_token' => $this->user->uuid,
         ];
 
         $this->json('POST', '/create', $data, $header);
@@ -86,11 +85,11 @@ class ShortUrlTest extends TestCase
         $url = 'http://www.my-valid-url.com';
 
         $data = [
-            'long_url' => $url
+            'long_url' => $url,
         ];
 
         $header = [
-            'HTTP_token' => $this->user->uuid
+            'HTTP_token' => $this->user->uuid,
         ];
 
         $this->json('POST', '/create', $data, $header);  // 201 New Link
@@ -109,12 +108,12 @@ class ShortUrlTest extends TestCase
         $short_url = 'shortlink';
 
         $data = [
-            'long_url' => $long_url,
-            'short_url' => $short_url
+            'long_url'  => $long_url,
+            'short_url' => $short_url,
         ];
 
         $header = [
-            'HTTP_token' => $this->user->uuid
+            'HTTP_token' => $this->user->uuid,
         ];
 
         $this->json('POST', '/create', $data, $header);
@@ -129,8 +128,4 @@ class ShortUrlTest extends TestCase
             $this->response->getContent()
         );
     }
-
-
-
-
 }

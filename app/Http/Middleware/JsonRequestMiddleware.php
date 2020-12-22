@@ -20,19 +20,14 @@ class JsonRequestMiddleware
     }
 }
 
-
-
 ////
 ///
 ///
 ///
 $app->middleware([
-    App\Http\Middleware\JsonRequestMiddleware::class
+    App\Http\Middleware\JsonRequestMiddleware::class,
 ]);
 
-
 //
-
-
 
 https://bitpress.io/php/laravel/2016/02/16/how-to-accept-json-post-requests-in-lumen/

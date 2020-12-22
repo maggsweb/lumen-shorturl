@@ -38,7 +38,6 @@ class AuthServiceProvider extends ServiceProvider
                 return User::byToken($token)->first();
             }
 
-
 //            return response()->json(['error' => 'Json Payload must contain id array i.e. {id:[]}'],500);
 
             return null;
