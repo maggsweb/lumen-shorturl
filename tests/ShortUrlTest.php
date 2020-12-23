@@ -7,7 +7,6 @@ class ShortUrlTest extends TestCase
         $this->post('/create');
 
         $this->seeStatusCode(401);
-
         $this->assertStringContainsString(
             'Unauthorized',
             $this->response->getContent()
@@ -23,7 +22,6 @@ class ShortUrlTest extends TestCase
         $this->post('/create', [], $header);
 
         $this->seeStatusCode(401);
-
         $this->assertStringContainsString(
             'Unauthorized',
             $this->response->getContent()
@@ -78,6 +76,7 @@ class ShortUrlTest extends TestCase
             json_encode($url),
             $this->response->getContent()
         );
+//        $this->seeInDatabase('')
     }
 
     public function testReturnExistingLink()

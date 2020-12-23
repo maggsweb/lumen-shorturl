@@ -15,8 +15,6 @@ use Laravel\Lumen\Routing\Router;
 
 /** @var Router $router */
 $router->get('/', function () {
-    // @TODO some sort of default page...
-    //return $router->app->version();
     return view('default');
 });
 
@@ -25,8 +23,8 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     // Create new Short URL
     $router->post('/create', 'LinkController@createLink');
 
-    // View Short Url redirect history
-    $router->post('/link', 'LinkController@listLink');
+    // View Short Urls for User
+    $router->post('/link', 'UserController@listLinks');
 
     // View User history (optionally filtered by short URL)
     $router->post('/user', 'UserController@listUser');
