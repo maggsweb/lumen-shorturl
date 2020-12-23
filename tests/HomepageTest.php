@@ -4,10 +4,8 @@ class HomepageTest extends TestCase
 {
     /**
      * Check Homepage exists.
-     *
-     * @test
      */
-    public function getHomepage()
+    public function testGetHomepage()
     {
         $this->get('/');
 
