@@ -23,9 +23,9 @@ class LinkFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => null, // pass in at create
-            'short' => $this->faker->regexify('[A-Za-z]{10}'),
-            'long'  => $this->faker->url,
+            'user_id'   => null, // pass in at create
+            'short'     => $this->faker->regexify('[A-Za-z]{10}'),
+            'long'      => $this->faker->url,
             'created_at'=> Carbon::now(),
         ];
     }

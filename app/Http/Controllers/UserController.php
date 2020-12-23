@@ -14,14 +14,14 @@ use Laravel\Lumen\Http\ResponseFactory;
 
 class UserController extends Controller
 {
-
     /**
      * List activity for a Link.
      *
      * @param Request $request
      *
-     * @return JsonResponse|Response|ResponseFactory
      * @throws ValidationException
+     *
+     * @return JsonResponse|Response|ResponseFactory
      */
     public function listLinks(Request $request)
     {
