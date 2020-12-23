@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,10 @@ use Illuminate\Support\Facades\Auth;
  */
 class Activity extends Model
 {
+    use HasFactory;
+
+    protected $guarded = [];
+
     protected $table = 'activity';
 
     protected $with = [
@@ -36,11 +41,6 @@ class Activity extends Model
         parent::__construct($attributes);
         $this->timestamps = false;
     }
-
-    /**
-     * @var array
-     */
-    protected $guarded = [];
 
     /**
      * Get Activity for a specific link.

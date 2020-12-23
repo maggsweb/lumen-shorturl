@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Link;
-
 class UserTest extends TestCase
 {
 
@@ -62,7 +60,22 @@ class UserTest extends TestCase
             'No Links found',
             $this->response->getContent()
         );
-
     }
+
+    public function testUserActivity()
+    {
+        $data = [];
+        $header = [
+            'HTTP_token' => $this->user->uuid
+        ];
+
+        $this->post('/user', $data, $header);
+
+        $data = json_decode($this->response->getContent(), 1);
+
+        $this->seeStatusCode(200);
+        $this->assertSame($this->activity->count(), count($data));
+    }
+
 
 }
