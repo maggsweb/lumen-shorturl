@@ -69,11 +69,13 @@ class Link extends Model
 
     /**
      * @param Builder $builder
+     *
      * @return Builder
      */
     public function scopeByUser(Builder $builder): Builder
     {
         $user_id = auth()->user()->getAuthIdentifier() ?? null;
+
         return $builder->where('user_id', $user_id);
     }
 

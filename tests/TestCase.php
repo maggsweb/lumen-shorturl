@@ -1,9 +1,8 @@
 <?php
 
+use App\Models\Activity;
 use App\Models\Link;
 use App\Models\User;
-use App\Models\Activity;
-
 use Illuminate\Database\Eloquent\Collection;
 use Laravel\Lumen\Application;
 use Laravel\Lumen\Testing\DatabaseMigrations;
@@ -24,13 +23,15 @@ abstract class TestCase extends BaseTestCase
     protected $alt_user;
 
     /**
-     * Links
+     * Links.
+     *
      * @var Collection
      */
     protected $links;
 
     /**
-     * Activity
+     * Activity.
+     *
      * @var Collection
      */
     protected $activity;
@@ -56,16 +57,16 @@ abstract class TestCase extends BaseTestCase
         $this->alt_user = User::factory()->create();
 
         $this->links = Link::factory()->count(3)->create([
-            'user_id' => $this->user->id
+            'user_id' => $this->user->id,
         ]);
 
         $this->activity = collect();
 
-        $this->links->each(function(Link $link){
+        $this->links->each(function (Link $link) {
             $activity = Activity::factory()->create([
                 'user_id' => $this->user->id,
                 'link_id' => $link->id,
-                'action' => 'Create'
+                'action'  => 'Create',
             ]);
             $this->activity->add($activity);
         });

@@ -3,7 +3,7 @@
 class RedirectTest extends TestCase
 {
     /**
-     * Check random url redirects
+     * Check random url redirects.
      */
     public function testLinkRedirects()
     {

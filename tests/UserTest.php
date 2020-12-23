@@ -2,12 +2,11 @@
 
 class UserTest extends TestCase
 {
-
     public function testUserIsInvalid()
     {
         $data = [];
         $header = [
-            'HTTP_token' => 'invalid-user'
+            'HTTP_token' => 'invalid-user',
         ];
 
         $this->post('/user', $data, $header);
@@ -23,7 +22,7 @@ class UserTest extends TestCase
     {
         $data = [];
         $header = [
-            'HTTP_token' => $this->user->uuid
+            'HTTP_token' => $this->user->uuid,
         ];
 
         $this->post('/user', $data, $header);
@@ -35,7 +34,7 @@ class UserTest extends TestCase
     {
         $data = [];
         $header = [
-            'HTTP_token' => $this->user->uuid
+            'HTTP_token' => $this->user->uuid,
         ];
 
         $this->post('/link', $data, $header);
@@ -50,7 +49,7 @@ class UserTest extends TestCase
     {
         $data = [];
         $header = [
-            'HTTP_token' => $this->alt_user->uuid
+            'HTTP_token' => $this->alt_user->uuid,
         ];
 
         $this->post('/link', $data, $header);
@@ -66,7 +65,7 @@ class UserTest extends TestCase
     {
         $data = [];
         $header = [
-            'HTTP_token' => $this->user->uuid
+            'HTTP_token' => $this->user->uuid,
         ];
 
         $this->post('/user', $data, $header);
@@ -76,6 +75,4 @@ class UserTest extends TestCase
         $this->seeStatusCode(200);
         $this->assertSame($this->activity->count(), count($data));
     }
-
-
 }
