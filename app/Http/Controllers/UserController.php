@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Activity;
 use App\Models\Link;
-use http\Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -15,9 +14,40 @@ use Laravel\Lumen\Http\ResponseFactory;
 
 class UserController extends Controller
 {
+
+    /**
+     * List activity for a Link.
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse|Response|ResponseFactory
+     * @throws ValidationException
+     */
+    public function listLinks(Request $request)
+    {
+        // Merge JSON body with request to Validate
+        $request->merge((array) json_decode($request->getContent()));
+
+        $this->validate($request, [
+            'short_url' => ['sometimes', 'exists:links,short'],
+        ]);
+
+        $links = Link::byUser();
+
+        if (!$links->count()) {
+            return response('No Links found', 200);
+        }
+
+        $userLinks = $links->count() > 15
+            ? $links->paginate(15)
+            : $links->get();
+
+        return response()->json($userLinks, 200);
+    }
+
     /**
      * List activity for a User
-     *  - optionally filter vy 'short_url'.
+     *  - optionally filter by 'short_url'.
      *
      * @param Request $request
      *

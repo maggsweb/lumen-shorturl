@@ -1,18 +1,29 @@
 <?php
 
+use App\Models\Link;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Laravel\Lumen\Application;
 use Laravel\Lumen\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
     use \Laravel\Lumen\Testing\DatabaseMigrations;
-//    use \Laravel\Lumen\Testing\DatabaseTransactions;
 
     /**
      * @var User
      */
     protected $user;
+
+    /**
+     * @var User
+     */
+    protected $alt_user;
+
+    /**
+     * @var array Links
+     */
+    protected $links;
 
     /**
      * Creates the application.
@@ -30,6 +41,12 @@ abstract class TestCase extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->user = User::factory()->create(); // ->make(); does not save model to db
+        $this->alt_user = User::factory()->create();
+
+        $this->links = Link::factory()->count(3)->create([
+            'user_id' => $this->user->id
+        ]);
     }
 }

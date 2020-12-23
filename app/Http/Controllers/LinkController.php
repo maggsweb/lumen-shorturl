@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Activity;
 use App\Models\Link;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -125,40 +124,6 @@ class LinkController extends Controller
         }
 
         return response('Link not found', 500);
-    }
-
-    /**
-     * List activity for a Link.
-     *
-     * @param Request $request
-     *
-     * @throws ValidationException
-     *
-     * @return JsonResponse|Response|ResponseFactory
-     */
-    public function listLink(Request $request)
-    {
-        // Merge JSON body with request to Validate
-        $request->merge((array) json_decode($request->getContent()));
-
-        $this->validate($request, [
-            'short_url' => ['required', 'exists:links,short'],
-        ]);
-
-        $short_url = $request->json('short_url');
-
-        $link = Link::byShortUrl($short_url)->first();
-        if (!$link) {
-            return response('Link not found', 500);
-        }
-
-        $activity = Activity::forLink($link->id);
-
-        $activityLogs = $activity->count() > 15
-            ? $activity->paginate(15)
-            : $activity->get();
-
-        return response()->json($activityLogs, 200);
     }
 
     /**
