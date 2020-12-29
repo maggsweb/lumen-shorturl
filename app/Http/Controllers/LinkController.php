@@ -27,10 +27,7 @@ class LinkController extends Controller
      */
     public function createLink(Request $request)
     {
-        // Merge JSON body with request to Validate
-        $data = $request->merge((array) json_decode($request->getContent()));
-
-        $this->validate($data, [
+        $this->validate($request, [
             'long_url'  => ['required', 'url', 'max:255'],
             'short_url' => ['sometimes', 'min:5', 'max:20', 'alpha'],
         ]);
@@ -77,9 +74,6 @@ class LinkController extends Controller
      */
     public function deleteLink(Request $request)
     {
-        // Merge JSON body with request to Validate
-        $request->merge((array) json_decode($request->getContent()));
-
         $this->validate($request, [
             'short_url' => ['required', 'exists:links,short'],
         ]);
@@ -135,16 +129,27 @@ class LinkController extends Controller
      */
     private function createShortCode($suggested = null): string
     {
-        if ($suggested && !Link::where('short', $suggested)->exists()) {
+        if ($suggested && !$this->shortCodeExists($suggested)) {
             return $suggested;
         }
 
         $short = base_convert(rand(), 10, 32);
 
-        if (Link::where('short', $short)->exists()) {
+        if ($this->shortCodeExists($short)) {
             return $this->createShortCode();
         }
 
         return $short;
+    }
+
+    /**
+     * Check whether a short code exists in the db
+     *
+     * @param $shortCode
+     * @return mixed
+     */
+    private function shortCodeExists($shortCode)
+    {
+        return Link::where('short', $shortCode)->exists();
     }
 }
