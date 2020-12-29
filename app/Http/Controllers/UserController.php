@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Activity;
 use App\Models\Link;
+use http\Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -25,9 +26,6 @@ class UserController extends Controller
      */
     public function listLinks(Request $request)
     {
-        // Merge JSON body with request to Validate
-        $request->merge((array) json_decode($request->getContent()));
-
         $this->validate($request, [
             'short_url' => ['sometimes', 'exists:links,short'],
         ]);
@@ -57,9 +55,6 @@ class UserController extends Controller
      */
     public function listUser(Request $request)
     {
-        // Merge JSON body with request to Validate
-        $request->merge((array) json_decode($request->getContent()));
-
         $this->validate($request, [
             'short_url' => ['sometimes', 'exists:links,short'],
         ]);
