@@ -143,9 +143,10 @@ class LinkController extends Controller
     }
 
     /**
-     * Check whether a short code exists in the db
+     * Check whether a short code exists in the db.
      *
      * @param $shortCode
+     *
      * @return mixed
      */
     private function shortCodeExists($shortCode)
