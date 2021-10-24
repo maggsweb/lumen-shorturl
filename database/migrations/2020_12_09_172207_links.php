@@ -18,18 +18,15 @@ class Links extends Migration
 
             // User
             $table->mediumInteger('user_id')->unsigned()->nullable(false)->index();
-            //$table->foreign('user_id')->references('id')->on('users'); //->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users');
 
             // URL
             $table->string('short')->unique()->nullable(false);
             $table->string('long')->nullable(false);
 
+            $table->softDeletes();
             $table->timestamps();
         });
-
-//        Schema::table('links', function($table) {
-//            $table->foreign('user_id')->references('id')->on('users'); //->onDelete('cascade');
-//        });
     }
 
     /**

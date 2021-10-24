@@ -13,19 +13,21 @@ class Users extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table)
+        {
             $table->bigIncrements('id');
+            $table->uuid('uuid')->nullable(false);
 
-            // UUID, to add to Header Requests, Unique, Indexed, Required..
-            $table->uuid('uuid')->unique()->nullable(false);
-
-            // User Account Status
+            // Account
+            $table->string('email')->unique()->nullable(false);
+            $table->string('password', 100)->nullable(false);
             $table->enum('status', ['Active', 'InActive'])->default('Active');
 
             // Name and Application
             $table->string('name')->nullable(false);
             $table->string('application')->nullable(false);
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

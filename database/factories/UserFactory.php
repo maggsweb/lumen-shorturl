@@ -21,12 +21,14 @@ class UserFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'uuid'        => Str::uuid()->toString(),
-            'status'      => 'Active',
+            'status'      => $this->faker->randomElement(['Active', 'InActive']),
             'name'        => $this->faker->name,
+            'email'       => $this->faker->safeEmail,
+            'password'    => $this->faker->password,
             'application' => $this->faker->company,
             'created_at'  => Carbon::now(),
         ];

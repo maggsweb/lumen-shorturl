@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -29,17 +31,32 @@ class AuthServiceProvider extends ServiceProvider
         // should return either a User instance or null. You're free to obtain
         // the User instance via an API token or any other method necessary.
 
-        $this->app['auth']->viaRequest('api', function ($request) {
+        $this->app['auth']->viaRequest('api', function (Request $request) {
 
-            //return User::all()->first();
-
-            if ($token = $request->header('token')) {
-                // Lookup a valid User
-                return User::byToken($token)->first();
+            // Authorization: Basic base64_encode($email:$password)
+            if (! $request->hasHeader('Authorization')) {
+                return null;
             }
 
-//            return response()->json(['error' => 'Json Payload must contain id array i.e. {id:[]}'],500);
+            $header = $request->header('Authorization', '');
 
+            $basic = strrpos($header, 'Basic ') === 0;
+            if (! $basic) {
+                return null;
+            }
+
+            $encoded = substr($header, 6);
+            $decoded = base64_decode($encoded);
+            if (! stristr($decoded,':')) {
+                return null;
+            }
+
+            list($email,$password) = explode(':', $decoded);
+
+            $user = User::where('email', $email)->first();
+            if (Hash::check($password, $user->password)) {
+                return $user;
+            }
             return null;
         });
     }
