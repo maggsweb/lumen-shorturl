@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Activity;
 use App\Models\Link;
-use http\Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +23,7 @@ class UserController extends Controller
      *
      * @return JsonResponse|Response|ResponseFactory
      */
-    public function listLinks(Request $request)
+    public function listLinks(Request $request): JsonResponse
     {
         $this->validate($request, [
             'short_url' => ['sometimes', 'exists:links,short'],
@@ -33,14 +32,14 @@ class UserController extends Controller
         $links = Link::byUser();
 
         if (!$links->count()) {
-            return response('No Links found', 200);
+            return response()->json('No Links found');
         }
 
         $userLinks = $links->count() > 15
             ? $links->paginate(15)
             : $links->get();
 
-        return response()->json($userLinks, 200);
+        return response()->json($userLinks);
     }
 
     /**
@@ -49,11 +48,11 @@ class UserController extends Controller
      *
      * @param Request $request
      *
+     * @return JsonResponse
      * @throws ValidationException
      *
-     * @return JsonResponse|Response|ResponseFactory
      */
-    public function listUser(Request $request)
+    public function listUser(Request $request): JsonResponse
     {
         $this->validate($request, [
             'short_url' => ['sometimes', 'exists:links,short'],
@@ -73,7 +72,7 @@ class UserController extends Controller
             ? $activity->paginate(15)
             : $activity->get();
 
-        return response()->json($activityLogs, 200);
+        return response()->json($activityLogs);
     }
 
     /**
@@ -85,19 +84,24 @@ class UserController extends Controller
 
         try {
             DB::beginTransaction();
+
             // Delete User Links and Link Activity
             $authUser->links->each(function ($link) {
                 $link->activity()->delete();
                 $link->delete();
             });
+
             // Delete User Acvtivity
             $authUser->activity()->delete();
+
             // Delete User
             $authUser->delete();
+
             DB::commit();
 
             return response('User deleted');
-        } catch (Exception $e) {
+
+        } catch (\Exception $e) {
             DB::rollBack();
             Activity::error(null, $e->getMessage());
 

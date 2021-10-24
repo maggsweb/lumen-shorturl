@@ -54,6 +54,9 @@ class AuthServiceProvider extends ServiceProvider
             list($email,$password) = explode(':', $decoded);
 
             $user = User::where('email', $email)->first();
+            if (!$user) {
+                return null;
+            }
             if (Hash::check($password, $user->password)) {
                 return $user;
             }

@@ -24,10 +24,10 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->post('/create', 'LinkController@createLink');
 
     // View Short Urls for User
-    $router->post('/link', 'UserController@listLinks');
+    $router->get('/links', 'UserController@listLinks');
 
     // View User history (optionally filtered by short URL)
-    $router->post('/user', 'UserController@listUser');
+    $router->get('/history', 'UserController@listUser');
 
     // Delete Short Url (and associated activity)
     $router->delete('/link', 'LinkController@deleteLink');
