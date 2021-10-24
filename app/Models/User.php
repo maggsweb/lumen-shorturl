@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Auth\Authorizable;
 
 /**
@@ -23,6 +25,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use Authenticatable;
     use Authorizable;
     use HasFactory;
+
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -48,6 +52,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
+     * @param string $password
+     */
+    public function setPasswordAttribute(string $password)
+    {
+        $this->attributes['password'] = Hash::make($password);
+    }
+
+    /**
      * Scope a valid User.
      *
      * @param Builder $builder
@@ -60,5 +72,30 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $builder
             ->where('uuid', $uuid)
             ->where('status', DB::raw("'Active'"));
+    }
+
+    public function getRememberTokenName()
+    {
+        // TODO: Implement getRememberTokenName() method.
+    }
+
+    public function offsetExists($offset)
+    {
+        // TODO: Implement offsetExists() method.
+    }
+
+    public function offsetGet($offset)
+    {
+        // TODO: Implement offsetGet() method.
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        // TODO: Implement offsetSet() method.
+    }
+
+    public function offsetUnset($offset)
+    {
+        // TODO: Implement offsetUnset() method.
     }
 }
