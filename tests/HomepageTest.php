@@ -8,7 +8,6 @@ class HomepageTest extends TestCase
     public function testGetHomepage()
     {
         $this->get('/');
-
         $this->seeStatusCode(200);
         $this->assertStringContainsString(
             'URL Shortner API',

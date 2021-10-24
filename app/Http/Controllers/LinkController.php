@@ -56,7 +56,9 @@ class LinkController extends Controller
             Activity::new($newLink);
 
             return response($newLink, 201);
+
         } catch (Exception $e) {
+
             Activity::error(null, $e->getMessage());
 
             return response('Error creating new Link', 500);
@@ -127,7 +129,7 @@ class LinkController extends Controller
      *
      * @return string
      */
-    private function createShortCode($suggested = null): string
+    protected function createShortCode($suggested = null): string
     {
         if ($suggested && !$this->shortCodeExists($suggested)) {
             return $suggested;
@@ -149,7 +151,7 @@ class LinkController extends Controller
      *
      * @return mixed
      */
-    private function shortCodeExists($shortCode)
+    protected function shortCodeExists($shortCode)
     {
         return Link::where('short', $shortCode)->exists();
     }
