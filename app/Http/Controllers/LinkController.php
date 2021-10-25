@@ -29,8 +29,8 @@ class LinkController extends Controller
             'short_url' => ['sometimes', 'min:5', 'max:20', 'alpha'],
         ]);
 
-        $long_url = $request->json('long_url');
-        $suggested_short_url = $request->json('short_url');
+        $long_url = $request->get('long_url');
+        $suggested_short_url = $request->get('short_url');
 
         $currentUserId = Auth::user()->getAuthIdentifier();
 

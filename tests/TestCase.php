@@ -4,6 +4,7 @@ use App\Models\Activity;
 use App\Models\Link;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Application;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\TestCase as BaseTestCase;
@@ -53,7 +54,12 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create(); // ->make(); does not save model to db
+        $this->user = User::factory()->create([
+            'email' => 'test@apiuser.com',
+            'password' => Hash::make('password'),
+            'status' => 'Active',
+        ]); // ->make(); does not save model to db
+
         $this->alt_user = User::factory()->create();
 
         $this->links = Link::factory()->count(3)->create([
