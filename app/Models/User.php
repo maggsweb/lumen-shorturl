@@ -5,18 +5,14 @@ namespace App\Models;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Auth\Authorizable;
 
 /**
- * @method static byToken($string)
- * @method static delete()
  *
  * @property $links
  */
@@ -25,7 +21,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use Authenticatable;
     use Authorizable;
     use HasFactory;
-
     use SoftDeletes;
 
     /**
@@ -52,50 +47,25 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * @param string $password
-     */
-    public function setPasswordAttribute(string $password)
-    {
-        $this->attributes['password'] = Hash::make($password);
-    }
-
-    /**
-     * Scope a valid User.
+     * Get a User using BasicAuth string
      *
-     * @param Builder $builder
-     * @param string  $uuid
-     *
-     * @return Builder
+     * @param string $auth_string
+     * @return User|null
      */
-    public function scopeByToken(Builder $builder, string $uuid): Builder
+    public static function byBasicAuth(string $auth_string): ?User
     {
-        return $builder
-            ->where('uuid', $uuid)
-            ->where('status', DB::raw("'Active'"));
-    }
+        $encoded = substr($auth_string, 6);
+        $decoded = base64_decode($encoded);
+        if (! stristr($decoded,':')) {
+            return null;
+        }
 
-    public function getRememberTokenName()
-    {
-        // TODO: Implement getRememberTokenName() method.
-    }
+        list($email,$password) = explode(':', $decoded);
 
-    public function offsetExists($offset)
-    {
-        // TODO: Implement offsetExists() method.
-    }
-
-    public function offsetGet($offset)
-    {
-        // TODO: Implement offsetGet() method.
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        // TODO: Implement offsetSet() method.
-    }
-
-    public function offsetUnset($offset)
-    {
-        // TODO: Implement offsetUnset() method.
+        $user = User::where('email', $email)->first();
+        if ($user && Hash::check($password, $user->password)) {
+            return $user;
+        }
+        return null;
     }
 }

@@ -26,6 +26,9 @@ class Activity extends Model
         'link',
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function link(): BelongsTo
     {
         return $this->belongsTo(Link::class, 'link_id');
@@ -83,6 +86,7 @@ class Activity extends Model
     {
         Activity::create([
             'link_id'    => $link->id,
+            'user_id'    => $link->user->id,
             'action'     => 'Redirect',
             'created_at' => Carbon::now(),
             'ip_address' => request()->ip(),
@@ -143,23 +147,4 @@ class Activity extends Model
         ];
     }
 
-    public function offsetExists($offset)
-    {
-        // TODO: Implement offsetExists() method.
-    }
-
-    public function offsetGet($offset)
-    {
-        // TODO: Implement offsetGet() method.
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        // TODO: Implement offsetSet() method.
-    }
-
-    public function offsetUnset($offset)
-    {
-        // TODO: Implement offsetUnset() method.
-    }
 }

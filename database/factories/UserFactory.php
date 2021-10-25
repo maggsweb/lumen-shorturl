@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class UserFactory extends Factory
@@ -28,7 +29,7 @@ class UserFactory extends Factory
             'status'      => $this->faker->randomElement(['Active', 'InActive']),
             'name'        => $this->faker->name,
             'email'       => $this->faker->safeEmail,
-            'password'    => $this->faker->password,
+            'password'    => Hash::make($this->faker->password),
             'application' => $this->faker->company,
             'created_at'  => Carbon::now(),
         ];
