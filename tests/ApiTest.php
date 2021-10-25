@@ -2,58 +2,77 @@
 
 class ApiTest extends TestCase
 {
+    /**
+     * @group Api
+     */
     public function testMissingHeaderToken()
     {
-        $this->post('/create');
-
-        $this->seeStatusCode(401);
-        $this->assertStringContainsString(
-            'Unauthorized',
-            $this->response->getContent()
-        );
+        $this
+            ->post('/create')
+            ->seeStatusCode(401)
+            ->assertStringContainsString(
+                'Unauthorized',
+                $this->response->getContent()
+            );
     }
 
+    /**
+     * @group Api
+     */
     public function testInvalidHeaderToken()
     {
-        $header = [
-            'HTTP_token' => '123456789',
-        ];
-
-        $this->post('/create', [], $header);
-
-        $this->seeStatusCode(401);
-        $this->assertStringContainsString(
-            'Unauthorized',
-            $this->response->getContent()
-        );
+        $this
+            ->post('/create', [], [
+                'HTTP_Authorization' => 'Basic INVALID00000HEADER',
+            ])
+            ->seeStatusCode(401)
+            ->assertStringContainsString(
+                'Unauthorized',
+                $this->response->getContent()
+            );
     }
 
+    /**
+     * @group Api
+     */
     public function testMissingBody()
     {
-        $data = [];
-        $header = [
-            'HTTP_token' => $this->user->uuid,
-        ];
-
-        $this->post('/create', $data, $header);
-
-        $this->seeStatusCode(422); // Validation
-        $this->assertJson('{"long_url":["The long url field is required."]}');
+        $this
+            ->post('/create', [], [
+                'HTTP_Authorization' => 'Basic '.base64_encode("{$this->user->email}:password"),
+            ])
+            ->seeStatusCode(422)
+            ->assertJson('{"long_url":["The long url field is required."]}');
     }
 
+    /**
+     * @group Api
+     */
     public function testInvalidBody()
     {
-        $data = [
-            'long_url' => 'some-invalid-url',
-        ];
-
-        $header = [
-            'HTTP_token' => $this->user->uuid,
-        ];
-
-        $this->post('/create', $data, $header);
-
-        $this->seeStatusCode(422); // Validation
-        $this->assertJson('{"long_url":["The long url format is invalid."]}');
+        $this
+            ->post('/create', [
+                'long_url' => 'some-invalid-url',
+            ], [
+                'HTTP_Authorization' => 'Basic '.base64_encode("{$this->user->email}:password"),
+            ])
+            ->seeStatusCode(422)
+            ->assertJson('{"long_url":["The long url format is invalid."]}');
     }
+
+    /**
+     * @group Api
+     */
+    public function testValidHeaderToken()
+    {
+        $this
+            ->post('/create', [
+	            'long_url' => 'http://www.apitest.com/aa/bb/cc/dd/ee/ff/gg',
+                'short_url' => 'alpha'
+            ], [
+                'HTTP_Authorization' => 'Basic '.base64_encode("{$this->user->email}:password"),
+            ])
+            ->seeStatusCode(201);
+    }
+
 }
