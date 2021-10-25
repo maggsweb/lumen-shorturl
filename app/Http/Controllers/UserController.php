@@ -39,7 +39,7 @@ class UserController extends Controller
             ? $links->paginate(15)
             : $links->get();
 
-        return response()->json($userLinks);
+        return response()->json($userLinks, 200);
     }
 
     /**
@@ -72,13 +72,15 @@ class UserController extends Controller
             ? $activity->paginate(15)
             : $activity->get();
 
-        return response()->json($activityLogs);
+        return response()->json($activityLogs, 200);
     }
 
     /**
      * Delete a User, Links and Activity.
+     *
+     * @return JsonResponse
      */
-    public function deleteUser()
+    public function deleteUser(): JsonResponse
     {
         $authUser = Auth::user();
 
@@ -99,13 +101,13 @@ class UserController extends Controller
 
             DB::commit();
 
-            return response('User deleted');
+            return response()->json(['User deleted'], 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
             Activity::error(null, $e->getMessage());
 
-            return response('Error deleting User', 500);
+            return response()->json(['Error deleting User'], 500);
         }
     }
 }

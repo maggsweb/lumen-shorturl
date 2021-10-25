@@ -38,29 +38,12 @@ class AuthServiceProvider extends ServiceProvider
                 return null;
             }
 
-            $header = $request->header('Authorization', '');
-
-            $basic = strrpos($header, 'Basic ') === 0;
-            if (! $basic) {
+            $header = (string) $request->header('Authorization', '');
+            if (strrpos($header, 'Basic ') !== 0) {
                 return null;
             }
 
-            $encoded = substr($header, 6);
-            $decoded = base64_decode($encoded);
-            if (! stristr($decoded,':')) {
-                return null;
-            }
-
-            list($email,$password) = explode(':', $decoded);
-
-            $user = User::where('email', $email)->first();
-            if (!$user) {
-                return null;
-            }
-            if (Hash::check($password, $user->password)) {
-                return $user;
-            }
-            return null;
+            return User::byBasicAuth($header);
         });
     }
 }

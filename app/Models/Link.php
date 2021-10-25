@@ -7,22 +7,70 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @method static create($array)
  * @method static where($column, $value)
  * @method static byShortUrl($string)
+ * @method static byLongUrl($string)
  * @method static byUser()
  */
 class Link extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'short',
         'long',
         'user_id',
     ];
+
+    protected $dates = [
+        'created_at'
+    ];
+
+    /**
+     * Retrieve a Link via ShortCode
+     *
+     * @param $short_code
+     * @return Link | null
+     */
+    public static function retrieve($short_code): ?Link
+    {
+        return Link::byShortUrl($short_code)->first();
+    }
+
+    /**
+     * Get Long URL
+     *
+     * @return string|null
+     */
+    public function getLongUrl(): ?string
+    {
+        return $this->long ?? null;
+    }
+
+    /**
+     * Get Short Code
+     *
+     * @return string|null
+     */
+    public function getShortCode(): ?string
+    {
+        return $this->short ?? null;
+    }
+
+    /**
+     * Get created Date
+     *
+     * @return string|null
+     */
+    public function getCreatedDate(): ?string
+    {
+        return $this->created_at ?? null;
+    }
 
     /**
      * User relation.
@@ -55,16 +103,28 @@ class Link extends Model
     }
 
     /**
-     * Scope by short_url and current authenticated User.
+     * Scope by Short Code
      *
      * @param Builder $builder
-     * @param string  $short_url
+     * @param string  $short_code
      *
      * @return Builder
      */
-    public function scopeByShortUrl(Builder $builder, string $short_url): Builder
+    public function scopeByShortUrl(Builder $builder, string $short_code): Builder
     {
-        return $builder->where('short', $short_url);
+        return $builder->where('short', $short_code);
+    }
+
+    /**
+     * Scope by Long URL
+     *
+     * @param Builder $builder
+     * @param string $long_url
+     * @return Builder
+     */
+    public function scopeByLongUrl(Builder $builder, string $long_url): Builder
+    {
+        return $builder->where('long', $long_url);
     }
 
     /**
@@ -87,10 +147,10 @@ class Link extends Model
     public function toArray(): array
     {
         return [
-            'short'   => $this->short,
-            'full'    => $this->getDomain().'/'.$this->short,
-            'long'    => $this->long,
-            'created' => $this->created_at,
+            'short'   => $this->getShortCode(),
+            'long'    => $this->getLongUrl(),
+            'full'    => $this->getDomain().'/'.$this->getShortCode(),
+            'created' => $this->getCreatedDate(),
         ];
     }
 }
