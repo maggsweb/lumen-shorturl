@@ -14,7 +14,7 @@ class LinkTest extends TestCase
         ]);
 
         $this->seeStatusCode(201);
-        $this->assertStringContainsString('www.my-valid-url.com',$this->response->getContent());
+        $this->assertStringContainsString('www.my-valid-url.com', $this->response->getContent());
         $this->assertJson($this->response->getContent());
     }
 
@@ -37,7 +37,7 @@ class LinkTest extends TestCase
         $this->post('/create', $data, $header);  // 200 Existing Link
 
         $this->seeStatusCode(200);
-        $this->assertStringContainsString(json_encode($url),$this->response->getContent());
+        $this->assertStringContainsString(json_encode($url), $this->response->getContent());
         $this->assertJson($this->response->getContent());
     }
 
@@ -61,8 +61,8 @@ class LinkTest extends TestCase
         $this->post('/create', $data, $header);
 
         $this->seeStatusCode(201);
-        $this->assertStringContainsString(json_encode($long_url),$this->response->getContent());
-        $this->assertStringContainsString($short_url,$this->response->getContent());
+        $this->assertStringContainsString(json_encode($long_url), $this->response->getContent());
+        $this->assertStringContainsString($short_url, $this->response->getContent());
         $this->assertJson($this->response->getContent());
     }
 }

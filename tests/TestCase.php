@@ -55,9 +55,9 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $this->user = User::factory()->create([
-            'email' => 'test@apiuser.com',
+            'email'    => 'test@apiuser.com',
             'password' => Hash::make('password'),
-            'status' => 'Active',
+            'status'   => 'Active',
         ]); // ->make(); does not save model to db
 
         $this->user->basicAuthString = base64_encode("{$this->user->email}:password");

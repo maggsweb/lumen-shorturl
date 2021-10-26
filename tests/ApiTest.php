@@ -10,7 +10,7 @@ class ApiTest extends TestCase
         $this->post('/create');
 
         $this->seeStatusCode(401);
-        $this->assertStringContainsString('Unauthorized',$this->response->getContent());
+        $this->assertStringContainsString('Unauthorized', $this->response->getContent());
     }
 
     /**
@@ -19,11 +19,11 @@ class ApiTest extends TestCase
     public function testInvalidHeaderToken()
     {
         $this->post('/create', [], [
-            'HTTP_Authorization' => 'Basic INVALID00000HEADER'
+            'HTTP_Authorization' => 'Basic INVALID00000HEADER',
         ]);
 
         $this->seeStatusCode(401);
-        $this->assertStringContainsString('Unauthorized',$this->response->getContent());
+        $this->assertStringContainsString('Unauthorized', $this->response->getContent());
     }
 
     /**
@@ -32,7 +32,7 @@ class ApiTest extends TestCase
     public function testMissingBody()
     {
         $this->post('/create', [], [
-            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString
+            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString,
         ]);
 
         $this->seeStatusCode(422);
@@ -48,12 +48,12 @@ class ApiTest extends TestCase
         $this->post('/create', [
             'long_url' => 'some-invalid-url',
         ], [
-            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString
+            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString,
         ]);
 
         $this->seeStatusCode(422);
         $this->assertJson($this->response->getContent());
-        $this->assertStringContainsString('The long url format is invalid.',$this->response->getContent());
+        $this->assertStringContainsString('The long url format is invalid.', $this->response->getContent());
     }
 
     /**
@@ -62,15 +62,14 @@ class ApiTest extends TestCase
     public function testValidRequest()
     {
         $this->post('/create', [
-            'long_url' => 'http://www.apitest.com/aa/bb/cc/dd/ee/ff/gg',
-            'short_url' => 'alpha'
+            'long_url'  => 'http://www.apitest.com/aa/bb/cc/dd/ee/ff/gg',
+            'short_url' => 'alpha',
         ], [
             'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString,
         ]);
 
         $this->seeStatusCode(201);
         $this->assertJson($this->response->getContent());
-        $this->assertStringContainsString('www.apitest.com',$this->response->getContent());
+        $this->assertStringContainsString('www.apitest.com', $this->response->getContent());
     }
-
 }

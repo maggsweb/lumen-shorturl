@@ -12,10 +12,10 @@ use Laravel\Lumen\Http\Redirector;
 class RedirectController extends Controller
 {
     /**
-     * Redirect ShortCode to LongURL
+     * Redirect ShortCode to LongURL.
      *
      * @param Request $request
-     * @param string $link
+     * @param string  $link
      *
      * @return JsonResponse|Redirector|RedirectResponse
      */
@@ -23,8 +23,10 @@ class RedirectController extends Controller
     {
         if ($link = Link::retrieve($link)) {
             Activity::redirect($link);
+
             return redirect($link->getLongUrl(), 302);
         }
+
         return response()->json(['Link not found'], 500);
     }
 }
