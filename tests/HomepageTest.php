@@ -3,9 +3,9 @@
 class HomepageTest extends TestCase
 {
     /**
-     * Check Homepage exists.
+     * @group Homepage
      */
-    public function testGetHomepage()
+    public function testHomepage()
     {
         $this->get('/');
         $this->seeStatusCode(200);

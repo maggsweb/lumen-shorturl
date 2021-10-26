@@ -60,6 +60,8 @@ abstract class TestCase extends BaseTestCase
             'status' => 'Active',
         ]); // ->make(); does not save model to db
 
+        $this->user->basicAuthString = base64_encode("{$this->user->email}:password");
+
         $this->alt_user = User::factory()->create();
 
         $this->links = Link::factory()->count(3)->create([
