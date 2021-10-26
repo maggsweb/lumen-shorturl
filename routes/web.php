@@ -22,16 +22,13 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 
     // Create new Short URL
     $router->post('/create', 'LinkController@createLink');
-
-    // View Short Urls for User
-    $router->get('/links', 'UserController@listLinks');
-
-    // View User history (optionally filtered by short URL)
-    $router->get('/history', 'UserController@listUser');
-
     // Delete Short Url (and associated activity)
     $router->delete('/link', 'LinkController@deleteLink');
 
+    // View Short Urls for User
+    $router->get('/links', 'UserController@listLinks');
+    // View User history (optionally filtered by short URL)
+    $router->get('/activity', 'UserController@listActivity');
     // Delete User Account (and all associated links & activity)
     $router->delete('/user', 'UserController@deleteUser');
 });

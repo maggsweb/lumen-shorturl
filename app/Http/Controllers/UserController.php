@@ -52,7 +52,7 @@ class UserController extends Controller
      * @throws ValidationException
      *
      */
-    public function listUser(Request $request): JsonResponse
+    public function listActivity(Request $request): JsonResponse
     {
         $this->validate($request, [
             'short_url' => ['sometimes', 'exists:links,short'],

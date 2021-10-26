@@ -2,14 +2,14 @@
 
 class UserTest extends TestCase
 {
-    public function testUserIsInvalid()
+    /**
+     * @group User
+     */
+    public function testInvalidUser()
     {
-        $data = [];
-        $header = [
-            'HTTP_token' => 'invalid-user',
-        ];
-
-        $this->post('/user', $data, $header);
+        $this->get('/links', [
+            'HTTP_Authorization' => 'Basic INVALID_USER_STRING',
+        ]);
 
         $this->seeStatusCode(401);
         $this->assertStringContainsString(
@@ -18,61 +18,33 @@ class UserTest extends TestCase
         );
     }
 
-    public function testUserValid()
+    /**
+     * @group User
+     */
+    public function testValidUser()
     {
-        $data = [];
-        $header = [
-            'HTTP_token' => $this->user->uuid,
-        ];
-
-        $this->post('/user', $data, $header);
+        $this->get('/links', [
+            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString,
+        ]);
 
         $this->seeStatusCode(200);
+        $this->assertJson($this->response->getContent());
     }
 
-    public function testUserHasLinks()
-    {
-        $data = [];
-        $header = [
-            'HTTP_token' => $this->user->uuid,
-        ];
-
-        $this->post('/link', $data, $header);
-
-        $data = json_decode($this->response->getContent(), 1);
-
-        $this->seeStatusCode(200);
-        $this->assertSame($this->links->count(), count($data));
-    }
-
-    public function testUserHasNoLinks()
-    {
-        $data = [];
-        $header = [
-            'HTTP_token' => $this->alt_user->uuid,
-        ];
-
-        $this->post('/link', $data, $header);
-
-        $this->seeStatusCode(200);
-        $this->assertStringContainsString(
-            'No Links found',
-            $this->response->getContent()
-        );
-    }
-
+    /**
+     * @group User
+     */
     public function testUserActivity()
     {
-        $data = [];
-        $header = [
-            'HTTP_token' => $this->user->uuid,
-        ];
-
-        $this->post('/user', $data, $header);
-
-        $data = json_decode($this->response->getContent(), 1);
+        $this->get('/activity', [
+            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString,
+        ]);
 
         $this->seeStatusCode(200);
-        $this->assertSame($this->activity->count(), count($data));
+        $this->assertJson($this->response->getContent());
+        $this->assertSame(
+            $this->activity->count(),
+            count(json_decode($this->response->getContent()))
+        );
     }
 }
