@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -34,7 +33,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->app['auth']->viaRequest('api', function (Request $request) {
 
             // Authorization: Basic base64_encode($email:$password)
-            if (! $request->hasHeader('Authorization')) {
+            if (!$request->hasHeader('Authorization')) {
                 return null;
             }
 

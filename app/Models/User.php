@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Auth\Authorizable;
 
 /**
- *
  * @property $links
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
@@ -47,25 +46,27 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Get a User using BasicAuth string
+     * Get a User using BasicAuth string.
      *
      * @param string $auth_string
+     *
      * @return User|null
      */
     public static function byBasicAuth(string $auth_string): ?User
     {
         $encoded = substr($auth_string, 6);
         $decoded = base64_decode($encoded);
-        if (! stristr($decoded,':')) {
+        if (!stristr($decoded, ':')) {
             return null;
         }
 
-        list($email,$password) = explode(':', $decoded);
+        list($email, $password) = explode(':', $decoded);
 
         $user = User::where('email', $email)->first();
         if ($user && Hash::check($password, $user->password)) {
             return $user;
         }
+
         return null;
     }
 }

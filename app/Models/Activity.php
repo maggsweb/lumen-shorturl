@@ -146,5 +146,4 @@ class Activity extends Model
             'ip_address' => $this->ip_address,
         ];
     }
-
 }

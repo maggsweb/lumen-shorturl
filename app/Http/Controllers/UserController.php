@@ -48,9 +48,9 @@ class UserController extends Controller
      *
      * @param Request $request
      *
-     * @return JsonResponse
      * @throws ValidationException
      *
+     * @return JsonResponse
      */
     public function listActivity(Request $request): JsonResponse
     {
@@ -102,7 +102,6 @@ class UserController extends Controller
             DB::commit();
 
             return response()->json(['User deleted'], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             Activity::error(null, $e->getMessage());

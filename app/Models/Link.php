@@ -28,13 +28,14 @@ class Link extends Model
     ];
 
     protected $dates = [
-        'created_at'
+        'created_at',
     ];
 
     /**
-     * Retrieve a Link via ShortCode
+     * Retrieve a Link via ShortCode.
      *
      * @param $short_code
+     *
      * @return Link | null
      */
     public static function retrieve($short_code): ?Link
@@ -43,7 +44,7 @@ class Link extends Model
     }
 
     /**
-     * Get Long URL
+     * Get Long URL.
      *
      * @return string|null
      */
@@ -53,7 +54,7 @@ class Link extends Model
     }
 
     /**
-     * Get Short Code
+     * Get Short Code.
      *
      * @return string|null
      */
@@ -63,7 +64,7 @@ class Link extends Model
     }
 
     /**
-     * Get created Date
+     * Get created Date.
      *
      * @return string|null
      */
@@ -103,7 +104,7 @@ class Link extends Model
     }
 
     /**
-     * Scope by Short Code
+     * Scope by Short Code.
      *
      * @param Builder $builder
      * @param string  $short_code
@@ -116,10 +117,11 @@ class Link extends Model
     }
 
     /**
-     * Scope by Long URL
+     * Scope by Long URL.
      *
      * @param Builder $builder
-     * @param string $long_url
+     * @param string  $long_url
+     *
      * @return Builder
      */
     public function scopeByLongUrl(Builder $builder, string $long_url): Builder

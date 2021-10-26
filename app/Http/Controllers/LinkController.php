@@ -18,9 +18,9 @@ class LinkController extends Controller
      *
      * @param Request $request
      *
-     * @return JsonResponse
      * @throws Exception
      *
+     * @return JsonResponse
      */
     public function createLink(Request $request): JsonResponse
     {
@@ -52,9 +52,7 @@ class LinkController extends Controller
             Activity::new($newLink);
 
             return response()->json([$newLink], 201);
-
         } catch (Exception $e) {
-
             Activity::error(null, $e->getMessage());
 
             return response()->json(['Error creating new Link'], 500);
@@ -66,9 +64,9 @@ class LinkController extends Controller
      *
      * @param Request $request
      *
-     * @return JsonResponse
      * @throws ValidationException
      *
+     * @return JsonResponse
      */
     public function deleteLink(Request $request): JsonResponse
     {
@@ -89,10 +87,8 @@ class LinkController extends Controller
             $link->delete();
             DB::commit();
 
-            return response() ->json(['Link deleted']);
-
+            return response()->json(['Link deleted']);
         } catch (Exception $e) {
-
             DB::rollBack();
 
             Activity::error(null, $e->getMessage());
