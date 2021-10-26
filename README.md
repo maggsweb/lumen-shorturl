@@ -5,7 +5,7 @@
 A back-end URL Shortener API
 - Built with Lumen v8
 - Uses GuzzleHttp\Client
-- Secured by unique API Key
+- Uses Basic Auth
 
 <hr>
 
