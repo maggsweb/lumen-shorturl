@@ -16,7 +16,7 @@ class Activity extends Migration
         Schema::create('activity', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->mediumInteger('user_id')->unsigned()->nullable(true)->index();
+            $table->bigInteger('user_id')->unsigned()->nullable(true)->index();
             $table->foreign('user_id')->references('id')->on('users');
 
             $table->mediumInteger('link_id')->unsigned()->nullable(true)->index();
