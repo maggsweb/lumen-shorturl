@@ -19,7 +19,7 @@ class Activity extends Migration
             $table->bigInteger('user_id')->unsigned()->nullable(true)->index();
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->mediumInteger('link_id')->unsigned()->nullable(true)->index();
+            $table->bigInteger('link_id')->unsigned()->nullable(true)->index();
             $table->foreign('link_id')->references('id')->on('links');
 
             $table->enum('action', ['Create', 'Redirect', 'Error']);
