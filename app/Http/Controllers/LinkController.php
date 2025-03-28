@@ -35,7 +35,10 @@ class LinkController extends Controller
         $currentUserId = Auth::user()->getAuthIdentifier();
 
         // If the URL already exists for this user, return the same record
-        if ($existingLink = Link::byLongUrl($long_url)->byUser($currentUserId)->first()) {
+        if ($existingLink = Link::withTrashed()->byLongUrl($long_url)->byUser($currentUserId)->first()) {
+            if ($existingLink->trashed()) {
+                $existingLink->restore();
+            }
             return response()->json([$existingLink], 200);
         }
 
