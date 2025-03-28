@@ -31,7 +31,6 @@ class AuthServiceProvider extends ServiceProvider
         // the User instance via an API token or any other method necessary.
 
         $this->app['auth']->viaRequest('api', function (Request $request) {
-
             // Authorization: Basic base64_encode($email:$password)
             if (!$request->hasHeader('Authorization')) {
                 return null;
