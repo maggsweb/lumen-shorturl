@@ -39,6 +39,7 @@ class LinkController extends Controller
             if ($existingLink->trashed()) {
                 $existingLink->restore();
             }
+
             return response()->json([$existingLink], 200);
         }
 
@@ -113,7 +114,7 @@ class LinkController extends Controller
             return $suggested;
         }
 
-        $short = ($suggested ? $suggested . '_' : '') . base_convert(rand(), 10, 32);
+        $short = ($suggested ? $suggested.'_' : '').base_convert(rand(), 10, 32);
 
         if ($this->shortCodeExists($short)) {
             return $this->createShortCode();
