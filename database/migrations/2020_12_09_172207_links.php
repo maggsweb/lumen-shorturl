@@ -21,7 +21,7 @@ class Links extends Migration
             $table->foreign('user_id')->references('id')->on('users');
 
             // URL
-            $table->string('short')->unique()->nullable(false);
+            $table->string('short')->nullable(false);
             $table->string('long')->nullable(false);
 
             $table->softDeletes();

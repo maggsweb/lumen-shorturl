@@ -113,7 +113,7 @@ class LinkController extends Controller
             return $suggested;
         }
 
-        $short = base_convert(rand(), 10, 32);
+        $short = ($suggested ? $suggested . '_' : '') . base_convert(rand(), 10, 32);
 
         if ($this->shortCodeExists($short)) {
             return $this->createShortCode();
