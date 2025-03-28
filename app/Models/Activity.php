@@ -117,7 +117,7 @@ class Activity extends Model
      * @param Link|null $link
      * @param string    $details
      */
-    public static function error(Link $link = null, string $details = '')
+    public static function error(?Link $link = null, string $details = '')
     {
         $currentUserId = Auth::user()->getAuthIdentifier();
 

@@ -19,7 +19,6 @@ $router->get('/', function () {
 });
 
 $router->group(['middleware' => 'auth'], function () use ($router) {
-
     // Create new Short URL
     $router->post('/create', 'LinkController@createLink');
     // Delete Short Url (and associated activity)
