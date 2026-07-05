@@ -19,8 +19,8 @@ $router->get('/', function () {
 });
 
 $router->group(['middleware' => 'auth'], function () use ($router) {
-    // Create new Short URL
-    $router->post('/create', 'LinkController@createLink');
+    // Create new Short URL (max 30 requests/min per user)
+    $router->post('/create', ['middleware' => 'throttle:30,1,create', 'uses' => 'LinkController@createLink']);
     // Delete Short Url (and associated activity)
     $router->delete('/link', 'LinkController@deleteLink');
 
@@ -32,5 +32,5 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->delete('/user', 'UserController@deleteUser');
 });
 
-// Redirect URL
-$router->get('/{link}', 'RedirectController@redirect');
+// Redirect URL (max 60 requests/min per IP)
+$router->get('/{link}', ['middleware' => 'throttle:60,1,redirect', 'uses' => 'RedirectController@redirect']);

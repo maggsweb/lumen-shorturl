@@ -66,7 +66,7 @@ class UserController extends Controller
             // Scope to the authenticated user so activity for another user's link cannot be read
             $link = Link::byShortUrl($short_url)->byUser()->first();
             if (!$link) {
-                return response()->json(['Link not found'], 404);
+                return response()->json(['error' => 'Link not found'], 404);
             }
             $activity->forLink($link->id);
         }
@@ -109,7 +109,7 @@ class UserController extends Controller
             DB::rollBack();
             Activity::error(null, $e->getMessage());
 
-            return response()->json(['Error deleting User'], 500);
+            return response()->json(['error' => 'Error deleting User'], 500);
         }
     }
 }

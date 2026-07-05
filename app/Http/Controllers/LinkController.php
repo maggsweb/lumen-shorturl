@@ -60,7 +60,7 @@ class LinkController extends Controller
         } catch (Exception $e) {
             Activity::error(null, $e->getMessage());
 
-            return response()->json(['Error creating new Link'], 500);
+            return response()->json(['error' => 'Error creating new Link'], 500);
         }
     }
 
@@ -84,7 +84,7 @@ class LinkController extends Controller
         // Scope to the authenticated user so a user cannot delete another user's link
         $link = Link::byShortUrl($short_url)->byUser()->first();
         if (!$link) {
-            return response()->json(['Link not found'], 404);
+            return response()->json(['error' => 'Link not found'], 404);
         }
 
         try {
@@ -99,7 +99,7 @@ class LinkController extends Controller
 
             Activity::error(null, $e->getMessage());
 
-            return response()->json(['Error deleting Link'], 500);
+            return response()->json(['error' => 'Error deleting Link'], 500);
         }
     }
 

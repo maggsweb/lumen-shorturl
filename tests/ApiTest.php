@@ -72,4 +72,25 @@ class ApiTest extends TestCase
         $this->assertJson($this->response->getContent());
         $this->assertStringContainsString('www.apitest.com', $this->response->getContent());
     }
+
+    /**
+     * @group Api
+     */
+    public function testCreateEndpointIsRateLimited()
+    {
+        $header = ['HTTP_Authorization' => 'Basic '.$this->user->basicAuthString];
+        $data = ['long_url' => 'http://www.rate-limit-test.com'];
+
+        // 30 requests/min are allowed for the authenticated user
+        for ($i = 0; $i < 30; $i++) {
+            $this->post('/create', $data, $header);
+            $this->assertNotEquals(429, $this->response->getStatusCode());
+        }
+
+        // The 31st request exceeds the limit
+        $this->post('/create', $data, $header);
+
+        $this->seeStatusCode(429);
+        $this->seeJson(['error' => 'Too many requests.']);
+    }
 }

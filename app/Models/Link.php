@@ -100,7 +100,7 @@ class Link extends Model
      */
     private function getDomain(): string
     {
-        return env('APP_URL', '');
+        return config('app.url', '');
     }
 
     /**

@@ -7,6 +7,13 @@ A back-end URL Shortener API
 - Uses GuzzleHttp\Client
 - Uses Basic Auth
 
+### Responses & limits
+- Errors are returned as `{ "error": "<message>" }` with the appropriate HTTP status
+  (`401` unauthorized, `404` not found, `422` validation, `429` too many requests, `500` server error).
+- Rate limits: `POST /create` is capped at **30 requests/min per user**; the public redirect
+  `GET /{shortcode}` at **60 requests/min per IP**. Exceeding a limit returns `429` with
+  `X-RateLimit-*` / `Retry-After` headers.
+
 <hr>
 
 ```php
