@@ -13,4 +13,15 @@ class RedirectTest extends TestCase
 
         $this->seeStatusCode(302);
     }
+
+    /**
+     * @group Redirect
+     */
+    public function testUnknownLinkReturns404()
+    {
+        $this->get('/this-code-does-not-exist');
+
+        $this->seeStatusCode(404);
+        $this->assertStringContainsString('Link not found', $this->response->getContent());
+    }
 }

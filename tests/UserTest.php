@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Link;
+
 class UserTest extends TestCase
 {
     /**
@@ -46,5 +48,42 @@ class UserTest extends TestCase
             $this->activity->count(),
             count(json_decode($this->response->getContent()))
         );
+    }
+
+    /**
+     * @group User
+     */
+    public function testCanFilterActivityByOwnLink()
+    {
+        $link = $this->links->first();
+
+        $this->json('GET', '/activity', [
+            'short_url' => $link->short,
+        ], [
+            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString,
+        ]);
+
+        $this->seeStatusCode(200);
+        $this->assertJson($this->response->getContent());
+    }
+
+    /**
+     * A user must not be able to read activity for another user's link.
+     *
+     * @group User
+     */
+    public function testCannotFilterActivityByAnotherUsersLink()
+    {
+        $foreignLink = Link::factory()->create([
+            'user_id' => $this->alt_user->id,
+        ]);
+
+        $this->json('GET', '/activity', [
+            'short_url' => $foreignLink->short,
+        ], [
+            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString,
+        ]);
+
+        $this->seeStatusCode(404);
     }
 }

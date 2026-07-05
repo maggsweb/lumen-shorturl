@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class LinkController extends Controller
@@ -115,7 +116,7 @@ class LinkController extends Controller
             return $suggested;
         }
 
-        $short = ($suggested ? $suggested.'_' : '').base_convert(rand(), 10, 32);
+        $short = ($suggested ? $suggested.'_' : '').Str::random(7);
 
         if ($this->shortCodeExists($short)) {
             return $this->createShortCode();
@@ -127,12 +128,15 @@ class LinkController extends Controller
     /**
      * Check whether a short code exists in the db.
      *
+     * Includes soft-deleted links so a code reserved by a trashed link is
+     * never regenerated (the unique index on `links.short` covers those rows).
+     *
      * @param $shortCode
      *
-     * @return mixed
+     * @return bool
      */
-    protected function shortCodeExists($shortCode)
+    protected function shortCodeExists($shortCode): bool
     {
-        return Link::byShortUrl($shortCode)->exists();
+        return Link::withTrashed()->byShortUrl($shortCode)->exists();
     }
 }

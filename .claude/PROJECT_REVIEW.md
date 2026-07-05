@@ -1,9 +1,32 @@
 # Project Review — MaggsWeb ShortUrl API
 
-_Reviewed: 2026-07-05 · Branch: `master` · Stack: Lumen 8 / PHP 8.2 / Basic Auth / MySQL_
+_Reviewed: 2026-07-05 · Updated: 2026-07-05 · Branch: `2026-07-security-review` · Stack: Lumen 8 / PHP 8.2 / Basic Auth / MySQL_
 
 A back-end URL-shortener API. Basic-Auth-protected endpoints create/delete short links,
 list a user's links and activity, and delete an account; a public route handles redirects.
+
+---
+
+## ✅ Recently Fixed
+
+- **🔴→✅ IDOR in `deleteLink` (P0).** `deleteLink` resolved the target link by short code
+  without scoping to the owner, letting any authenticated user delete another user's link and
+  its activity. Now chains `->byUser()` onto the lookup and returns **404** (was 500) when no
+  owned link matches. Covered by regression tests `testUserCanDeleteOwnLink` and
+  `testUserCannotDeleteAnotherUsersLink` (the previously-unused `$alt_user` fixture is now
+  exercised). Commit `d5cb32a`. — `app/Http/Controllers/LinkController.php`
+- **🟠→✅ Foreign `short_url` in `listActivity` (P1).** Lookup now scoped with `->byUser()` and
+  returns 404 for a code the caller doesn't own. Regression tests `testCanFilterActivityByOwnLink`
+  / `testCannotFilterActivityByAnotherUsersLink`. **Also fixed a latent bug found while testing:**
+  `UserController` type-hinted `Laravel\Lumen\Http\Request` instead of `Illuminate\Http\Request`,
+  so the injected request was empty and `$request->json('short_url')` was *always* null — the
+  activity filter had never worked. — `app/Http/Controllers/UserController.php`
+- **🟠→✅ Predictable / non-unique short codes (P1).** Generation now uses `Str::random(7)`
+  (CSPRNG) instead of `base_convert(rand(), 10, 32)`; `shortCodeExists` checks `withTrashed()`;
+  and a new migration adds a **unique index** on `links.short` as a backstop against the
+  check-then-insert race. — `LinkController.php`, `2026_07_05_000000_add_unique_index_to_links_short.php`
+- **🟠→✅ 404 on redirect miss (P1).** `RedirectController` returns 404 (was 500) for an unknown
+  code. Regression test `testUnknownLinkReturns404`. — `app/Http/Controllers/RedirectController.php`
 
 ---
 
@@ -19,37 +42,19 @@ list a user's links and activity, and delete an account; a public route handles 
   `DB::beginTransaction()` with rollback + error logging.
 - **Activity/audit logging.** Create / Redirect / Error events are recorded with IP address.
 - **Real test suite.** Factories, `DatabaseMigrations`, and coverage of the main happy paths
-  (create, existing-link reuse, suggested code, redirect, auth success/failure, activity).
+  plus the new delete-authorization regression tests. 15 tests / 39 assertions passing.
 - **Secrets handled correctly.** `.env` and logs are git-ignored and not tracked.
 
 ---
 
 ## ❌ What's Bad (bugs / security)
 
-### 🔴 High — Broken access control (IDOR) in `deleteLink`
-`app/Http/Controllers/LinkController.php:75`
-```php
-$this->validate($request, ['short_url' => ['required', 'exists:links,short']]);
-$link = Link::byShortUrl($short_url)->first();   // NOT scoped to the current user
-```
-`exists:links,short` matches a short code **anywhere** in the table, and `byShortUrl` isn't
-scoped by `user_id`. Any authenticated user can delete **any other user's link and its
-activity**. Contrast with `createLink`, which correctly chains `->byUser($currentUserId)`.
-**Fix:** scope to owner — `Link::byShortUrl($short_url)->byUser($currentUserId)->first()` —
-and return 404 when null.
-
 ### 🟠 Medium
-- **Foreign `short_url` accepted in `listActivity`** (`UserController.php:66`). A short code
-  belonging to another user passes `exists` validation; currently contained only because
-  `forUser()` also filters `user_id`. Reject foreign short codes explicitly rather than relying
-  on that.
-- **Predictable / non-unique short codes** (`LinkController.php:117`). `base_convert(rand(),10,32)`
-  is not cryptographically random and enumerable. Combined with the **missing unique index on
-  `links.short`**, there is a check-then-insert race allowing collisions.
-- **Wrong HTTP status codes.** "Not found" returns **500** (`RedirectController.php:30`,
-  `LinkController.php:85`). Should be **404**; 500 implies a server fault and skews monitoring.
 - **`env()` used at runtime** (`Link.php:103`, `getDomain()`). Returns null if config is ever
   cached. Use `config('app.url')`.
+
+_(The three former Medium items — foreign `short_url`, predictable/non-unique codes, and the
+redirect status code — are now resolved; see **Recently Fixed**.)_
 
 ### 🟡 Low / polish
 - **Dead validation + wrong docblock** in `listLinks` — validates `short_url` but never uses it;
@@ -79,14 +84,14 @@ and return 404 when null.
 ## 🚀 How to Improve
 
 **Security & correctness (do first)**
-1. Fix the `deleteLink` IDOR and scope every link/activity lookup to the authenticated user.
-2. Add a **unique index** on `links.short`; generate codes with `random_bytes()` / `Str::random()`.
-3. Return correct status codes (404 not-found, 400/422 validation, 500 only for real faults).
+1. ~~Fix the `deleteLink` IDOR and scope link lookups to the authenticated user.~~ ✅ Done.
+2. ~~Add a **unique index** on `links.short`; generate codes with `Str::random()`.~~ ✅ Done.
+3. ~~Return correct status codes on the redirect miss (404).~~ ✅ Done — statuses now consistent.
 4. Add **rate limiting** on `/create` and the public redirect (abuse / enumeration).
 
 **Robustness**
-5. Add negative-authorization tests — user A cannot delete/read user B's data. `$alt_user` is
-   already created in `TestCase::setUp` but unused; it's set up for exactly this.
+5. ~~Add negative-authorization tests — user A cannot delete/read user B's data.~~ ✅ Done for
+   both `deleteLink` and `listActivity`.
 6. Consider **cascade deletes** (DB-level `onDelete('cascade')`) as a backstop to the manual
    transactional deletes.
 7. Standardize the JSON error envelope (e.g. `{ "error": { "code", "message" } }`) instead of
@@ -102,10 +107,11 @@ and return 404 when null.
 
 ## Priority Snapshot
 
-| Priority | Item |
-|----------|------|
-| 🔴 P0 | Fix `deleteLink` IDOR + add regression tests |
-| 🟠 P1 | Unique index + secure short-code generation; correct status codes |
-| 🟠 P1 | Reject foreign `short_url` in `listActivity` |
-| 🟡 P2 | Rate limiting; `env()`→`config()`; error-envelope standardization |
-| 🟡 P3 | Framework/toolchain upgrade; CI; API docs |
+| Priority | Item | Status |
+|----------|------|--------|
+| 🔴 P0 | Fix `deleteLink` IDOR + add regression tests | ✅ Done (`d5cb32a`) |
+| 🟠 P1 | Unique index + secure short-code generation | ✅ Done |
+| 🟠 P1 | Reject foreign `short_url` in `listActivity` (+ Request type-hint bug) | ✅ Done |
+| 🟠 P1 | 404 on redirect miss (`RedirectController`) | ✅ Done |
+| 🟡 P2 | Rate limiting; `env()`→`config()`; error-envelope standardization | Open |
+| 🟡 P3 | Framework/toolchain upgrade; CI; API docs | Open |
