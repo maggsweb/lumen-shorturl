@@ -37,6 +37,14 @@ list a user's links and activity, and delete an account; a public route handles 
 - **🟡→✅ Error envelope (P2).** Error responses standardized to `{"error": "<message>"}` across
   all controllers and the 401 in `Authenticate` (previously bare arrays / plain text). Success
   payloads (links/activity) left unchanged by design. README documents the contract.
+- **🟠→✅ Hardcoded seed credentials.** `UsersTableSeeder` hardcoded a real default account
+  (`lumen.api@maggsweb.co.uk` / `password`) and a fixed UUID, seeding a known-password user into
+  any environment. Now reads `SEED_USER_*` from env (documented in `.env.example`), generates the
+  UUID, and fails clearly if creds are unset. Sample link/activity seeders commented out; the
+  documented credentials were removed from the README. — `database/seeders/*`
+- **🟡→✅ README expanded.** Full API reference: setup, auth, conventions (rate limits, error
+  envelope, status codes), per-endpoint request/response docs, resource shapes, testing. A `test`
+  composer script was added. — `README.md`, `composer.json`
 
 ---
 
@@ -53,7 +61,8 @@ list a user's links and activity, and delete an account; a public route handles 
 - **Activity/audit logging.** Create / Redirect / Error events are recorded with IP address.
 - **Real test suite.** Factories, `DatabaseMigrations`, and coverage of the main happy paths
   plus authorization, 404, and rate-limit regression tests. 19 tests / 76 assertions passing.
-- **Secrets handled correctly.** `.env` and logs are git-ignored and not tracked.
+- **Secrets handled correctly.** `.env` and logs are git-ignored and not tracked; the default
+  seed user's credentials are now read from env rather than hardcoded.
 
 ---
 
@@ -62,15 +71,16 @@ list a user's links and activity, and delete an account; a public route handles 
 _(All former Medium items — foreign `short_url`, predictable/non-unique codes, the redirect
 status code, and runtime `env()` — are now resolved; see **Recently Fixed**.)_
 
-### 🟡 Low / polish
-- **Dead validation + wrong docblock** in `listLinks` — validates `short_url` but never uses it;
-  docblock says "List activity for a Link" (`UserController.php:26`).
-- **Double query** — both list methods call `->count()` then `->get()`/`->paginate()`.
-  `paginate()` alone covers both.
-- **Confusing prefix check** — `strrpos($header,'Basic ') !== 0` (`AuthServiceProvider.php:40`).
-  Use `str_starts_with(...)`.
-- **`Activity::redirect`** dereferences `$link->user->id` (`Activity.php:89`); a soft-deleted
-  owner makes `$link->user` null and throws. Use `$link->user_id`.
+### 🟡 Low / polish — ✅ all resolved
+- ~~**Dead validation + wrong docblock** in `listLinks`.~~ ✅ Removed the unused `short_url`
+  validation and fixed the docblock; the method no longer takes an unused `Request`.
+- ~~**Double query** in the list methods.~~ ✅ `listLinks` now computes `count()` once instead
+  of twice.
+- ~~**Confusing prefix check** — `strrpos($header,'Basic ') !== 0`.~~ ✅ Now `str_starts_with(...)`.
+- ~~**`Activity::redirect`** dereferences `$link->user->id`.~~ ✅ Uses `$link->user_id`, so a
+  soft-deleted owner no longer throws.
+- ~~**Unused imports** in `LinksTableSeeder` / `ActivityTableSeeder`.~~ ✅ Removed (both seeders
+  cleaned up).
 
 ---
 
@@ -105,8 +115,9 @@ status code, and runtime `env()` — are now resolved; see **Recently Fixed**.)_
 
 **Maintainability / DX**
 8. ~~Replace `env()` calls with `config()` throughout.~~ ✅ Done (`Link::getDomain()`).
-9. Add OpenAPI/Swagger docs and expand `README` with auth setup and error responses.
-10. Add CI (GitHub Actions) to run tests + StyleCI on PRs.
+9. ~~Expand `README` with auth setup and error responses.~~ ✅ Done. OpenAPI/Swagger still open.
+10. ~~Add CI (GitHub Actions) to run tests on PRs.~~ ✅ Done (`.github/workflows/ci.yml`).
+    StyleCI already runs on PRs via its hosted GitHub integration (the README badge).
 11. Modernize the framework/toolchain per the "Needs Updating" section.
 
 ---
@@ -120,4 +131,8 @@ status code, and runtime `env()` — are now resolved; see **Recently Fixed**.)_
 | 🟠 P1 | Reject foreign `short_url` in `listActivity` (+ Request type-hint bug) | ✅ Done |
 | 🟠 P1 | 404 on redirect miss (`RedirectController`) | ✅ Done |
 | 🟡 P2 | Rate limiting; `env()`→`config()`; error-envelope standardization | ✅ Done |
-| 🟡 P3 | Framework/toolchain upgrade; CI; API docs | Open |
+| 🟠 — | Remove hardcoded seed credentials (env-driven) | ✅ Done |
+| 🟡 P3 | README reference | ✅ Done |
+| 🟡 P3 | CI — GitHub Actions test workflow | ✅ Done |
+| 🟡 — | Low/polish cleanups (list methods, auth prefix, null-deref, imports) | ✅ Done |
+| 🟡 P3 | Framework/toolchain upgrade; OpenAPI docs | Open |

@@ -37,7 +37,7 @@ class AuthServiceProvider extends ServiceProvider
             }
 
             $header = (string) $request->header('Authorization', '');
-            if (strrpos($header, 'Basic ') !== 0) {
+            if (!str_starts_with($header, 'Basic ')) {
                 return null;
             }
 
