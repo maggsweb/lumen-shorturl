@@ -27,6 +27,6 @@ class RedirectController extends Controller
             return redirect($link->getLongUrl(), 302);
         }
 
-        return response()->json(['Link not found'], 500);
+        return response()->json(['Link not found'], 404);
     }
 }

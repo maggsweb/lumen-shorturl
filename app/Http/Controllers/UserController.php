@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Activity;
 use App\Models\Link;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use Laravel\Lumen\Http\Request;
 use Laravel\Lumen\Http\ResponseFactory;
 
 class UserController extends Controller
@@ -63,8 +63,11 @@ class UserController extends Controller
 
         $short_url = $request->json('short_url');
         if ($short_url) {
-            // Get link
-            $link = Link::byShortUrl($short_url)->first();
+            // Scope to the authenticated user so activity for another user's link cannot be read
+            $link = Link::byShortUrl($short_url)->byUser()->first();
+            if (!$link) {
+                return response()->json(['Link not found'], 404);
+            }
             $activity->forLink($link->id);
         }
 
