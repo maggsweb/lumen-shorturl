@@ -80,9 +80,10 @@ class LinkController extends Controller
 
         $short_url = $request->json('short_url');
 
-        $link = Link::byShortUrl($short_url)->first();
+        // Scope to the authenticated user so a user cannot delete another user's link
+        $link = Link::byShortUrl($short_url)->byUser()->first();
         if (!$link) {
-            return response()->json(['Link not found'], 500);
+            return response()->json(['Link not found'], 404);
         }
 
         try {

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Link;
+
 class LinkTest extends TestCase
 {
     /**
@@ -64,5 +66,45 @@ class LinkTest extends TestCase
         $this->assertStringContainsString(json_encode($long_url), $this->response->getContent());
         $this->assertStringContainsString($short_url, $this->response->getContent());
         $this->assertJson($this->response->getContent());
+    }
+
+    /**
+     * @group Links
+     */
+    public function testUserCanDeleteOwnLink()
+    {
+        $link = $this->links->first();
+
+        $this->json('DELETE', '/link', [
+            'short_url' => $link->short,
+        ], [
+            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString,
+        ]);
+
+        $this->seeStatusCode(200);
+        $this->assertStringContainsString('Link deleted', $this->response->getContent());
+        $this->assertNull(Link::byShortUrl($link->short)->first());
+    }
+
+    /**
+     * A user must not be able to delete a link belonging to another user.
+     *
+     * @group Links
+     */
+    public function testUserCannotDeleteAnotherUsersLink()
+    {
+        $foreignLink = Link::factory()->create([
+            'user_id' => $this->alt_user->id,
+        ]);
+
+        $this->json('DELETE', '/link', [
+            'short_url' => $foreignLink->short,
+        ], [
+            'HTTP_Authorization' => 'Basic '.$this->user->basicAuthString,
+        ]);
+
+        $this->seeStatusCode(404);
+        // The foreign link must still exist
+        $this->assertNotNull(Link::byShortUrl($foreignLink->short)->first());
     }
 }
