@@ -6,5 +6,4 @@ use Illuminate\Database\Seeder;
 
 class LinksTableSeeder extends Seeder
 {
-
 }
