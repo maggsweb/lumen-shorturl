@@ -86,7 +86,7 @@ class Activity extends Model
     {
         Activity::create([
             'link_id'    => $link->id,
-            'user_id'    => $link->user->id,
+            'user_id'    => $link->user_id,
             'action'     => 'Redirect',
             'created_at' => Carbon::now(),
             'ip_address' => request()->ip(),
