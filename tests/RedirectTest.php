@@ -22,6 +22,6 @@ class RedirectTest extends TestCase
         $this->get('/this-code-does-not-exist');
 
         $this->seeStatusCode(404);
-        $this->assertStringContainsString('Link not found', $this->response->getContent());
+        $this->seeJson(['error' => 'Link not found']);
     }
 }

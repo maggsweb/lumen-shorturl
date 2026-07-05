@@ -27,6 +27,16 @@ list a user's links and activity, and delete an account; a public route handles 
   check-then-insert race. — `LinkController.php`, `2026_07_05_000000_add_unique_index_to_links_short.php`
 - **🟠→✅ 404 on redirect miss (P1).** `RedirectController` returns 404 (was 500) for an unknown
   code. Regression test `testUnknownLinkReturns404`. — `app/Http/Controllers/RedirectController.php`
+- **🟡→✅ Rate limiting (P2).** New `ThrottleRequests` middleware (cache-backed `RateLimiter`,
+  per-user when authenticated / per-IP otherwise). `POST /create` = 30/min per user, redirect
+  `GET /{link}` = 60/min per IP; returns 429 with `X-RateLimit-*` / `Retry-After` headers.
+  Regression test `testCreateEndpointIsRateLimited`. — `app/Http/Middleware/ThrottleRequests.php`,
+  `bootstrap/app.php`, `routes/web.php`
+- **🟡→✅ `env()` → `config()` (P2).** `Link::getDomain()` now reads `config('app.url')` instead
+  of `env('APP_URL')`, so it survives config caching. — `app/Models/Link.php`
+- **🟡→✅ Error envelope (P2).** Error responses standardized to `{"error": "<message>"}` across
+  all controllers and the 401 in `Authenticate` (previously bare arrays / plain text). Success
+  payloads (links/activity) left unchanged by design. README documents the contract.
 
 ---
 
@@ -42,19 +52,15 @@ list a user's links and activity, and delete an account; a public route handles 
   `DB::beginTransaction()` with rollback + error logging.
 - **Activity/audit logging.** Create / Redirect / Error events are recorded with IP address.
 - **Real test suite.** Factories, `DatabaseMigrations`, and coverage of the main happy paths
-  plus the new delete-authorization regression tests. 15 tests / 39 assertions passing.
+  plus authorization, 404, and rate-limit regression tests. 19 tests / 76 assertions passing.
 - **Secrets handled correctly.** `.env` and logs are git-ignored and not tracked.
 
 ---
 
 ## ❌ What's Bad (bugs / security)
 
-### 🟠 Medium
-- **`env()` used at runtime** (`Link.php:103`, `getDomain()`). Returns null if config is ever
-  cached. Use `config('app.url')`.
-
-_(The three former Medium items — foreign `short_url`, predictable/non-unique codes, and the
-redirect status code — are now resolved; see **Recently Fixed**.)_
+_(All former Medium items — foreign `short_url`, predictable/non-unique codes, the redirect
+status code, and runtime `env()` — are now resolved; see **Recently Fixed**.)_
 
 ### 🟡 Low / polish
 - **Dead validation + wrong docblock** in `listLinks` — validates `short_url` but never uses it;
@@ -87,18 +93,18 @@ redirect status code — are now resolved; see **Recently Fixed**.)_
 1. ~~Fix the `deleteLink` IDOR and scope link lookups to the authenticated user.~~ ✅ Done.
 2. ~~Add a **unique index** on `links.short`; generate codes with `Str::random()`.~~ ✅ Done.
 3. ~~Return correct status codes on the redirect miss (404).~~ ✅ Done — statuses now consistent.
-4. Add **rate limiting** on `/create` and the public redirect (abuse / enumeration).
+4. ~~Add **rate limiting** on `/create` and the public redirect (abuse / enumeration).~~ ✅ Done.
 
 **Robustness**
 5. ~~Add negative-authorization tests — user A cannot delete/read user B's data.~~ ✅ Done for
    both `deleteLink` and `listActivity`.
 6. Consider **cascade deletes** (DB-level `onDelete('cascade')`) as a backstop to the manual
    transactional deletes.
-7. Standardize the JSON error envelope (e.g. `{ "error": { "code", "message" } }`) instead of
-   bare arrays like `['Link not found']`.
+7. ~~Standardize the JSON error envelope instead of bare arrays like `['Link not found']`.~~
+   ✅ Done — errors now `{"error": "<message>"}` (success payloads unchanged).
 
 **Maintainability / DX**
-8. Replace `env()` calls with `config()` throughout.
+8. ~~Replace `env()` calls with `config()` throughout.~~ ✅ Done (`Link::getDomain()`).
 9. Add OpenAPI/Swagger docs and expand `README` with auth setup and error responses.
 10. Add CI (GitHub Actions) to run tests + StyleCI on PRs.
 11. Modernize the framework/toolchain per the "Needs Updating" section.
@@ -113,5 +119,5 @@ redirect status code — are now resolved; see **Recently Fixed**.)_
 | 🟠 P1 | Unique index + secure short-code generation | ✅ Done |
 | 🟠 P1 | Reject foreign `short_url` in `listActivity` (+ Request type-hint bug) | ✅ Done |
 | 🟠 P1 | 404 on redirect miss (`RedirectController`) | ✅ Done |
-| 🟡 P2 | Rate limiting; `env()`→`config()`; error-envelope standardization | Open |
+| 🟡 P2 | Rate limiting; `env()`→`config()`; error-envelope standardization | ✅ Done |
 | 🟡 P3 | Framework/toolchain upgrade; CI; API docs | Open |
