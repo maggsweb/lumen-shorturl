@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 class UsersTableSeeder extends Seeder
 {
@@ -17,18 +18,25 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        // Default User
+        $email = env('SEED_USER_EMAIL');
+        $password = env('SEED_USER_PASSWORD');
+
+        if (empty($email) || empty($password)) {
+            throw new RuntimeException(
+                'UsersTableSeeder requires SEED_USER_EMAIL and SEED_USER_PASSWORD to be set in your .env file.'
+            );
+        }
+
+        // Default User (id 1 is referenced by the Links/Activity seeders)
         DB::table('users')->insert([
             'id'          => 1,
-            'uuid'        => '6985b9e8-7db1-4e8f-b8b4-6eae56d22020',
-            'email'       => 'lumen.api@maggsweb.co.uk',
-            'password'    => Hash::make('password'),
+            'uuid'        => (string) Str::uuid(),
+            'email'       => $email,
+            'password'    => Hash::make($password),
             'status'      => 'Active',
-            'name'        => 'Chris Maggs',
-            'application' => 'Default Application',
+            'name'        => env('SEED_USER_NAME', 'API User'),
+            'application' => env('SEED_USER_APPLICATION', 'Default Application'),
             'created_at'  => Carbon::now(),
         ]);
-
-        User::factory()->times(2)->create();
     }
 }
